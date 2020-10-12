@@ -1,0 +1,77 @@
+{
+	"languageCode": "EN",
+	"languageLocalName": "English",
+	"cyrillicGlyphs": false,
+	"tempUnitFahrenheit": true,
+	"messages": {
+		"SettingsCalibrationDone": "Calibration done!",
+		"SettingsCalibrationWarning": "Please ensure the tip is at room temperature, before continuing!",
+		"SettingsResetWarning": "Are you sure you want to reset settings to default values?",
+		"UVLOWarningString": "DC LOW",
+		"UndervoltageString": "Undervoltage",
+		"InputVoltageString": "Input V: ",
+		"WarningTipTempString": "Tip temp: ",
+		"BadTipString": "BAD TIP",
+		"SleepingSimpleString": "Zzzz",
+		"SleepingAdvancedString": "Sleeping...",
+		"WarningSimpleString": "HOT!",
+		"WarningAdvancedString": "!!! TIP HOT !!!",
+		"SleepingTipAdvancedString": "Tip:",
+		"IdleTipString": "Tip:",
+		"IdleSetString": " Set:",
+		"TipDisconnectedString": "TIP DISCONNECTED",
+		"SolderingAdvancedPowerPrompt": "Power: ",
+		"OffString": "Off",
+		"ResetOKMessage": "Reset OK",
+		"YourGainMessage": "Your gain:",
+		"SettingsResetMessage": "Settings were\nreset!",
+		"Test1": "Test1",
+		"Test2": "Test2"
+	},
+	"menuRootGroups": {
+		"ModeMenu": {
+			"text2": [
+				"Mode",
+				""
+			],
+			"desc": "Mode menu"
+		},
+		"SettingsMenu": {
+			"text2": [
+				"Settings",
+				""
+			],
+			"desc": "Settings Menu"
+		}
+	},
+	"menuOptions": {
+		"AutomaticSolderPasteDispenser": {
+			"text2": [
+				"Automatic Solder",
+				"Paste Dispenser"
+			],
+			"desc": "Automatic Solder Paste Dispenser mode"
+		},
+		"VacuumPickUp": {
+			"text2": [
+				"Vacuum Pick-Up",
+				""
+			],
+			"desc": "Vacuum Pick-Up mode"
+		},
+		"Contrast": {
+			"text2": [
+				"Contrast",
+				""
+			],
+			"desc": "Contrast 0% - 100%"
+		},
+		"SettingsReset": {
+			"text2": [
+				"Settings",
+				"Reset"
+			],
+			"desc": "Shutdown timeout <Minutes>"
+		}
+	}
+}
