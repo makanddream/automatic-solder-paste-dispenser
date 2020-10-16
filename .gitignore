@@ -59,9 +59,12 @@ dkms.conf
 
 # Not neccesary because it's just for my own workspace
 /workspace/stm32L432-ssd1306
+/workspace/save-data-on-flash
 /workspace/.metadata
 /workspace/RemoteSystemsTempFiles
 /workspace/ASPD100/.settings
+
+/Translation_Editor/__pycache__
 
 # Debug
 *.scana
