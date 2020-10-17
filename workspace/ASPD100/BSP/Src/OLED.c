@@ -162,11 +162,15 @@ void OLED_setFramebuffer(uint8_t *buffer) {
 	if (buffer == NULL) {
 		OLED.firstStripPtr = &OLED.screenBuffer[sizeof(REFRESH_COMMANDS)];
 		OLED.secondStripPtr = &OLED.screenBuffer[sizeof(REFRESH_COMMANDS) + OLED_WIDTH];
+		OLED.thirdStripPtr = &OLED.screenBuffer[sizeof(REFRESH_COMMANDS) + OLED_WIDTH*2];
+		OLED.fourthStripPtr = &OLED.screenBuffer[sizeof(REFRESH_COMMANDS) + OLED_WIDTH*3];
 		return;
 	}
 
 	OLED.firstStripPtr = &buffer[0];
 	OLED.secondStripPtr = &buffer[OLED_WIDTH];
+	OLED.thirdStripPtr = &buffer[OLED_WIDTH*2];
+	OLED.fourthStripPtr = &buffer[OLED_WIDTH*3];
 }
 
 /*
@@ -219,8 +223,10 @@ void OLED_drawScrollIndicator(uint8_t y, uint8_t height) {
 void OLED_transitionSecondaryFramebuffer(bool forwardNavigation) {
 	uint8_t *firstBackStripPtr = &OLED.secondFrameBuffer[0];
 	uint8_t *secondBackStripPtr = &OLED.secondFrameBuffer[OLED_WIDTH];
+	uint8_t *thirdBackStripPtr = &OLED.secondFrameBuffer[OLED_WIDTH*2];
+	uint8_t *fourthBackStripPtr = &OLED.secondFrameBuffer[OLED_WIDTH*3];
 
-	uint32_t totalDuration = 50; // 500ms
+	uint32_t totalDuration = 70; // 500ms
 	uint32_t duration = 0;
 	uint32_t start = xTaskGetTickCount();
 	uint8_t offset = 0;
@@ -250,10 +256,15 @@ void OLED_transitionSecondaryFramebuffer(bool forwardNavigation) {
 		OLED_WIDTH - progress);
 		memmove(&OLED.secondStripPtr[oldStart], &OLED.secondStripPtr[oldPrevious],
 		OLED_WIDTH - progress);
+		memmove(&OLED.thirdStripPtr[oldStart], &OLED.thirdStripPtr[oldPrevious],
+		OLED_WIDTH - progress);
+		memmove(&OLED.fourthStripPtr[oldStart], &OLED.fourthStripPtr[oldPrevious],
+		OLED_WIDTH - progress);
 
 		memmove(&OLED.firstStripPtr[newStart], &firstBackStripPtr[newEnd], progress);
-		memmove(&OLED.secondStripPtr[newStart], &secondBackStripPtr[newEnd],
-				progress);
+		memmove(&OLED.secondStripPtr[newStart], &secondBackStripPtr[newEnd], progress);
+		memmove(&OLED.thirdStripPtr[newStart], &thirdBackStripPtr[newEnd], progress);
+		memmove(&OLED.fourthStripPtr[newStart], &fourthBackStripPtr[newEnd], progress);
 
 		OLED_refresh();
 		osDelay(40);
