@@ -33,11 +33,15 @@ _estack = ORIGIN(RAM) + LENGTH(RAM);	/* end of "RAM" Ram type memory */
 _Min_Heap_Size = 0x200 ;	/* required amount of heap  */
 _Min_Stack_Size = 0x400 ;	/* required amount of stack */
 
+__FLASH_SIZE__ = 256K;
+__APP_BASE_ADDRESS__ = 0x08000000;
+__FLASH_END_ADDR__ = 0x0803FFFF;
+
 /* Memories definition */
 MEMORY
 {
   RAM    (xrw)    : ORIGIN = 0x20000000,   LENGTH = 64K
-  FLASH    (rx)    : ORIGIN = 0x8000000,   LENGTH = 256K
+  FLASH    (rx)    : ORIGIN = __APP_BASE_ADDRESS__,   LENGTH = __FLASH_SIZE__
 }
 
 /* Sections */
@@ -135,6 +139,12 @@ SECTIONS
     _edata = .;        /* define a global symbol at data end */
     
   } >RAM AT> FLASH
+
+  .settings_page (NOLOAD) :
+  {
+    . = ABSOLUTE(__FLASH_END_ADDR__ - 1024);
+    KEEP (*(.settings_page*))
+  } > FLASH
 
   /* Uninitialized data section into "RAM" Ram type memory */
   . = ALIGN(4);

@@ -133,7 +133,7 @@ static int userConfirmation(const char *message) {
 
 	for (;;) {
 		int16_t messageOffset = ((xTaskGetTickCount() - messageStart)
-				/ (systemSettings.descriptionScrollSpeed == 1 ? 10 : 20));
+				/ 10);
 		messageOffset %= messageWidth;  // Roll around at the end
 
 		if (lastOffset != messageOffset) {
@@ -148,7 +148,7 @@ static int userConfirmation(const char *message) {
 
 		ButtonState buttons = getButtonState();
 		switch (buttons) {
-		case BUTTON_L_SHORT:
+		case BUTTON_R_SHORT:
 			// User confirmed
 			return 1;
 
@@ -156,7 +156,7 @@ static int userConfirmation(const char *message) {
 			break;
 		default:
 		case BUTTON_BOTH:
-		case BUTTON_R_SHORT:
+		case BUTTON_L_SHORT:
 		case BUTTON_L_LONG:
 		case BUTTON_R_LONG:
 			return 0;
@@ -173,6 +173,9 @@ static int userConfirmation(const char *message) {
 
 /* Functions of the mode menu options */
 static bool settings_setAutomaticSolderPasteDispenser(void) {
+	if(userConfirmation(UserConfirmation)){
+		systemSettings.modeType = 1;
+	}
 	return true;
 }
 
@@ -181,6 +184,9 @@ static void settings_displayAutomaticSolderPasteDispenser(void) {
 }
 
 static bool settings_setVacuumPickUp(void) {
+	if(userConfirmation(UserConfirmation)){
+		systemSettings.modeType = 2;
+	}
 	return true;
 }
 
@@ -258,18 +264,15 @@ static bool enterSettingsMenu(void) {
 void gui_Menu(const menuitem *menu) {
 // Draw the settings menu and provide iteration support etc
 	uint8_t currentScreen = 0;
-	uint32_t autoRepeatTimer = 0;
-	uint8_t autoRepeatAcceleration = 0;
 	bool earlyExit = false;
 	uint32_t descriptionStart = 0;
-	int16_t lastOffset = -1;
 	bool lcdRefresh = true;
 	ButtonState lastButtonState = BUTTON_NONE;
 	static bool enterGUIMenu = true;
 	enterGUIMenu = true;
 	uint8_t scrollContentSize = 0;
-	bool scrollBlink = false;
 	bool lastValue = false;
+	bool isSelect = false;
 
 	for (uint8_t i = 0; menu[i].draw != NULL; i++) {
 		scrollContentSize += 1;
@@ -299,13 +302,6 @@ void gui_Menu(const menuitem *menu) {
 				) {
 			OLED_clearScreen();
 			menu[currentScreen].draw();
-			//uint8_t indicatorHeight = OLED_HEIGHT / scrollContentSize;
-			//uint8_t position = OLED_HEIGHT * currentScreen / scrollContentSize;
-			if (lastValue)
-				scrollBlink = !scrollBlink;
-			if (!lastValue || !scrollBlink)
-				//OLED_drawScrollIndicator(position, indicatorHeight);
-			lastOffset = -1;
 			lcdRefresh = true;
 		} else {
 			// Draw description
@@ -314,7 +310,7 @@ void gui_Menu(const menuitem *menu) {
 			// lower the value - higher the speed
 			int16_t descriptionWidth =
 			FONT_12_WIDTH * (strlen(menu[currentScreen].description) + 7);
-			int16_t descriptionOffset =
+			/*int16_t descriptionOffset =
 					((xTaskGetTickCount() - descriptionStart)
 							/ (systemSettings.descriptionScrollSpeed == 1 ?
 									10 : 20));
@@ -326,13 +322,12 @@ void gui_Menu(const menuitem *menu) {
 				OLED_print(SleepingAdvancedString);
 				lastOffset = descriptionOffset;
 				lcdRefresh = true;
-			}
+			}*/
 		}
 
 		ButtonState buttons = getButtonState();
 
 		if (buttons != lastButtonState) {
-			autoRepeatAcceleration = 0;
 			lastButtonState = buttons;
 		}
 
@@ -342,17 +337,29 @@ void gui_Menu(const menuitem *menu) {
 				descriptionStart = 0;
 				break;
 			case BUTTON_R_SHORT:
+				// increment
 				if (descriptionStart == 0) {
-					if(currentScreen == (scrollContentSize - 1))
+					if(currentScreen == (scrollContentSize - 1)){
 						currentScreen = 0;
-					else
+					}else{
 						currentScreen++;
-					lastValue = false;
+						lastValue = false;
+					}
 				} else
 					descriptionStart = 0;
 				break;
-
-				// increment
+			case BUTTON_L_SHORT:
+				if (descriptionStart == 0) {
+					if(currentScreen == 0){
+						currentScreen = scrollContentSize - 1;
+					}else{
+						currentScreen--;
+						lastValue = false;
+					}
+				} else
+					descriptionStart = 0;
+				break;
+			case BUTTON_R_LONG:
 				if (descriptionStart == 0) {
 					if (menu[currentScreen].incrementHandler != NULL) {
 						enterGUIMenu = false;
@@ -373,52 +380,14 @@ void gui_Menu(const menuitem *menu) {
 					}
 				} else
 					descriptionStart = 0;
-				break;
-			case BUTTON_L_SHORT:
-				if (descriptionStart == 0) {
-					if(currentScreen == 0)
-						currentScreen = scrollContentSize - 1;
-					else
-						currentScreen--;
-					lastValue = false;
-				} else
-					descriptionStart = 0;
-				break;
-			case BUTTON_R_LONG:
-				if ((int) (xTaskGetTickCount() - autoRepeatTimer
-						+ autoRepeatAcceleration) >
-				PRESS_ACCEL_INTERVAL_MAX) {
-					if ((lastValue = menu[currentScreen].incrementHandler()))
-						autoRepeatTimer = 1000;
-					else
-						autoRepeatTimer = 0;
-
-					autoRepeatTimer += xTaskGetTickCount();
-
-					descriptionStart = 0;
-
-					autoRepeatAcceleration += PRESS_ACCEL_STEP;
-				}
+				isSelect = true;
 				break;
 			case BUTTON_L_LONG:
-				if (xTaskGetTickCount() - autoRepeatTimer + autoRepeatAcceleration >
-				PRESS_ACCEL_INTERVAL_MAX) {
-					currentScreen++;
-					autoRepeatTimer = xTaskGetTickCount();
-					descriptionStart = 0;
-
-					autoRepeatAcceleration += PRESS_ACCEL_STEP;
-				}
+				earlyExit = true;
 				break;
 			case BUTTON_NONE:
 			default:
 				break;
-		}
-
-		if ((PRESS_ACCEL_INTERVAL_MAX - autoRepeatAcceleration) <
-		PRESS_ACCEL_INTERVAL_MIN) {
-			autoRepeatAcceleration =
-			PRESS_ACCEL_INTERVAL_MAX - PRESS_ACCEL_INTERVAL_MIN;
 		}
 
 		if (lcdRefresh) {
@@ -437,5 +406,6 @@ void gui_Menu(const menuitem *menu) {
 
 void enterRootMenu() {
 	gui_Menu(rootMenu);  // Call the root menu
-	//saveSettings();
+	systemSettings.isFirstStart = false;
+	saveSettings();
 }

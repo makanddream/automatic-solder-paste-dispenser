@@ -43,6 +43,7 @@
 
 /* USER CODE BEGIN PV */
 uint8_t PCBVersion = 0;
+bool settingsWereReset = false;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -113,6 +114,8 @@ int main(void)
   MX_USART2_UART_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
+  settingsWereReset = restoreSettings();  // load the settings from flash
+
   printf("ASPD100 application running on STM32L432KC-Nucleo board!\r\n");
   /* USER CODE END 2 */
 

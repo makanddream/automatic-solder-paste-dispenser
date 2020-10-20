@@ -153,9 +153,12 @@ static void gui_automaticSolderPasteDispenserMode(void) {
 				return;
 				break;
 			case BUTTON_R_LONG:
-				return;  // exit on back long hold
+				//return;  // exit on back long hold
+				resetSettings();
+				saveSettings();
 				break;
 			case BUTTON_L_LONG:
+				systemSettings.modeType = 2;
 				break;
 			case BUTTON_R_SHORT:
 			case BUTTON_L_SHORT: {
@@ -202,9 +205,12 @@ static void gui_vacuumPickUpMode(void) {
 				return;
 				break;
 			case BUTTON_R_LONG:
-				return;  // exit on back long hold
+				//return;  // exit on back long hold
+				resetSettings();
+				saveSettings();
 				break;
 			case BUTTON_L_LONG:
+				systemSettings.modeType = 1;
 				break;
 			case BUTTON_R_SHORT:
 			case BUTTON_L_SHORT: {
@@ -233,25 +239,24 @@ void StartGUITask(void *argument)
   /* USER CODE BEGIN StartGUITask */
   /* Infinite loop */
 	OLED_initialize();  // start up the OLED screen
-	resetSettings();
 
 	bool buttonLockout = false;
 
 	for (;;) {
-#if 1
+#if 0
 		if(systemSettings.isFirstStart){
 			enterRootMenu();  // enter the settings menu
 			buttonLockout = true;
 		}else{
-			if(systemSettings.modeType == 0){
+			if(systemSettings.modeType == 1){
 				// Mode = Automatic Solder Paste Dispenser
 				gui_automaticSolderPasteDispenserMode();
-			}else if(systemSettings.modeType == 1){
+			}else if(systemSettings.modeType == 2){
 				// Mode = Vacuum Pick-Up
 				gui_vacuumPickUpMode();
 			}
 		}
-#elif 0
+#elif 1
 		enterRootMenu();  // enter the settings menu
 		buttonLockout = true;
 #elif 0

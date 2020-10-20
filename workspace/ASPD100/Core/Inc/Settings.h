@@ -10,7 +10,7 @@
 #ifndef INC_SETTINGS_H_
 #define INC_SETTINGS_H_
 
-#define SETTINGSVERSION   ( 0x01 )
+#define SETTINGS_VERSION   ( 0x01 )
 
 #include <stdio.h>
 #include <stdbool.h>
@@ -24,9 +24,6 @@ typedef struct {
 
 
 	uint8_t SleepTime;       // minutes timeout to sleep
-	uint8_t ShutdownTime;          // Time until unit shuts down if left alone
-	uint8_t detailedIDLE :1;       // Detailed idle screen
-	uint8_t descriptionScrollSpeed :1;  // Description scroll speed
 	uint16_t contrast;  // contrast value
 	uint16_t isFirstStart;  // contrast value
 	uint8_t modeType;
