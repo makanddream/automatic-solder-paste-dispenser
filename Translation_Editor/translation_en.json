@@ -26,7 +26,8 @@
 		"YourGainMessage": "Your gain:",
 		"SettingsResetMessage": "Settings were\nreset!",
 		"Test1": "Test1",
-		"Test2": "Test2"
+		"Test2": "Test2",
+		"UserConfirmation": "User Confirmation"
 	},
 	"menuRootGroups": {
 		"ModeMenu": {

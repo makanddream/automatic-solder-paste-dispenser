@@ -58,6 +58,7 @@ extern const char *SymbolVersionNumber;
 
 extern const char *Test1;
 extern const char *Test2;
+extern const char *UserConfirmation;
 
 extern const char *DebugMenu[];
 #endif /* TRANSLATION_H_ */

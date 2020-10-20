@@ -169,6 +169,18 @@ def getLetterCounts(defs, lang):
         textList.append(x[1])
     textList.extend(getDebugMenu())
 
+    #### menuOptions ####
+    obj = lang['menuOptions']
+    for mod in defs['menuOptions']:
+        eid = mod['id']
+        textList.append(obj[eid]['desc'])
+
+    obj = lang['menuOptions']
+    for mod in defs['menuOptions']:
+        eid = mod['id']
+        textList.append(obj[eid]['text2'][0])
+        textList.append(obj[eid]['text2'][1])
+
     # collapse all strings down into the composite letters and store totals for these
 
     symbolCounts = {}
@@ -208,46 +220,46 @@ def getFontMapAndTable(textList):
             symbolMap[sym] = "\\x%0.2X" % index
             index = index + 1
     # Get the font table
-    fontTableStrings = []
-    fontSmallTableStrings = []
-    fontTable = fontTables.getFontMap()
-    fontSmallTable = fontTables.getSmallFontMap()
+    font12x16TableStrings = []
+    font6x8TableStrings = []
+    font12x16Table = fontTables.get12x16FontMap()
+    font6x8Table = fontTables.get6x8FontMap()
     for sym in forcedFirstSymbols:
-        if sym not in fontTable:
-            print('Missing Large font element for {}'.format(sym))
+        if sym not in font12x16Table:
+            print('Missing 12x16 font element for {}'.format(sym))
             exit(1)
-        fontLine = fontTable[sym]
-        fontTableStrings.append(
+        fontLine = font12x16Table[sym]
+        font12x16TableStrings.append(
             fontLine + "//{} -> {}".format(symbolMap[sym], sym))
-        if sym not in fontSmallTable:
-            print('Missing Small font element for {}'.format(sym))
+        if sym not in font6x8Table:
+            print('Missing 6x8 font element for {}'.format(sym))
             exit(1)
-        fontLine = fontSmallTable[sym]
-        fontSmallTableStrings.append(
+        fontLine = font6x8Table[sym]
+        font6x8TableStrings.append(
             fontLine + "//{} -> {}".format(symbolMap[sym], sym))
 
     for sym in textList:
-        if sym not in fontTable:
-            print('Missing Large font element for {}'.format(sym))
+        if sym not in font12x16Table:
+            print('Missing 12x16 font element for {}'.format(sym))
             exit(1)
         if sym not in forcedFirstSymbols:
-            fontLine = fontTable[sym]
-            fontTableStrings.append(
+            fontLine = font12x16Table[sym]
+            font12x16TableStrings.append(
                 fontLine + "//{} -> {}".format(symbolMap[sym], sym))
-            if sym not in fontSmallTable:
-                print('Missing Small font element for {}'.format(sym))
+            if sym not in font6x8Table:
+                print('Missing 6x8 font element for {}'.format(sym))
                 exit(1)
-            fontLine = fontSmallTable[sym]
-            fontSmallTableStrings.append(
+            fontLine = font6x8Table[sym]
+            font6x8TableStrings.append(
                 fontLine + "//{} -> {}".format(symbolMap[sym], sym))
     outputTable = "const uint8_t USER_FONT_12x16[] = {" + to_unicode("\n")
-    for line in fontTableStrings:
+    for line in font12x16TableStrings:
         # join font table int one large string
         outputTable = outputTable + line + to_unicode("\n")
     outputTable = outputTable + "};" + to_unicode("\n")
     outputTable = outputTable + "const uint8_t USER_FONT_6x8[] = {" + to_unicode(
         "\n")
-    for line in fontSmallTableStrings:
+    for line in font6x8TableStrings:
         # join font table int one large string
         outputTable = outputTable + line + to_unicode("\n")
     outputTable = outputTable + "};" + to_unicode("\n")
@@ -287,7 +299,7 @@ def writeLanguage(languageCode, defs, f):
     f.write(to_unicode("const char* SettingsDescriptions[] = {\n"))
 
     maxLen = 25
-    index =0	
+    index =0
     for mod in defs['menuOptions']:
         eid = mod['id']
         if 'feature' in mod:
@@ -374,7 +386,6 @@ def writeLanguage(languageCode, defs, f):
         eid = mod['id']
         f.write(to_unicode("  /* " + eid.ljust(maxLen)[:maxLen] + " */ "))
         if obj[eid]['text2'][1] == '':
-            print("obj[eid]['text2'][1] = NULL");
             f.write(
                 to_unicode("\"" +
                            convStr(symbolConversionTable, (obj[eid]['text2'][0]))

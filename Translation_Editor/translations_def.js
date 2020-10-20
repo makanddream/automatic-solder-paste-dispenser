@@ -104,7 +104,11 @@ var def =
 			"id": "Test2",
 			"maxLen": 8,
 			"default": "Test2"
-		}
+		},
+		{
+			"id": "UserConfirmation",
+			"maxLen": 8
+		}		
 	],
 	"menuRootGroups": [
 		{
@@ -119,13 +123,13 @@ var def =
 	"menuOptions": [
 		{
 			"id": "AutomaticSolderPasteDispenser",
-			"maxLen": 5,
-			"maxLen2": 11
+			"maxLen": 20,
+			"maxLen2": 30
 		},
 		{
 			"id": "VacuumPickUp",
-			"maxLen": 4,
-			"maxLen2": 9
+			"maxLen": 10,
+			"maxLen2": 20
 		},
 		{
 			"id": "Contrast",
