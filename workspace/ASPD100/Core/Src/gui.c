@@ -13,7 +13,6 @@
 #include "unit.h"
 #include "../../configuration.h"
 #include "Buttons.h"
-#include "OLED_SSD1306.h"
 
 
 void gui_Menu(const menuitem *menu);
@@ -153,12 +152,12 @@ static int userConfirmation(const char *message) {
 			return 1;
 
 		case BUTTON_NONE:
+		case BUTTON_L_LONG:
+		case BUTTON_R_LONG:
 			break;
 		default:
 		case BUTTON_BOTH:
 		case BUTTON_L_SHORT:
-		case BUTTON_L_LONG:
-		case BUTTON_R_LONG:
 			return 0;
 		}
 
@@ -173,24 +172,20 @@ static int userConfirmation(const char *message) {
 
 /* Functions of the mode menu options */
 static bool settings_setAutomaticSolderPasteDispenser(void) {
-	if(userConfirmation(UserConfirmation)){
-		systemSettings.modeType = 1;
-	}
 	return true;
 }
 
 static void settings_displayAutomaticSolderPasteDispenser(void) {
+	systemSettings.modeType = 1;
 	printShortDescription(0, 0);
 }
 
 static bool settings_setVacuumPickUp(void) {
-	if(userConfirmation(UserConfirmation)){
-		systemSettings.modeType = 2;
-	}
 	return true;
 }
 
 static void settings_displayVacuumPickUp(void) {
+	systemSettings.modeType = 2;
 	printShortDescription(1, 0);
 }
 /* end */
@@ -205,20 +200,12 @@ static void settings_displayContrast(void) {
 }
 
 static bool settings_setResetSettings(void) {
-	return true;
-}
-
-static void settings_displayResetSettings(void) {
-	printShortDescription(3, 0);
-}
-/* end */
-
-/*static bool settings_setResetSettings(void) {
 	if (userConfirmation(SettingsResetWarning)) {
 		resetSettings();
 
 		OLED_setFont(0);
-		OLED_setCursor(0, 8);
+		OLED_setCursor(0, 0);
+		OLED_clearScreen();
 		OLED_print(ResetOKMessage);
 		OLED_refresh();
 
@@ -227,10 +214,11 @@ static void settings_displayResetSettings(void) {
 	return false;
 }
 
+
 static void settings_displayResetSettings(void) {
-	//printShortDescription(12, 7);
 	printShortDescription(3, 0);
-}*/
+}
+/* end */
 
 static void displayMenu(size_t index) {
 // Call into the menu
@@ -264,8 +252,11 @@ static bool enterSettingsMenu(void) {
 void gui_Menu(const menuitem *menu) {
 // Draw the settings menu and provide iteration support etc
 	uint8_t currentScreen = 0;
+	uint32_t autoRepeatTimer = 0;
+	uint8_t autoRepeatAcceleration = 0;
 	bool earlyExit = false;
 	uint32_t descriptionStart = 0;
+	int16_t lastOffset = -1;
 	bool lcdRefresh = true;
 	ButtonState lastButtonState = BUTTON_NONE;
 	static bool enterGUIMenu = true;
@@ -308,12 +299,11 @@ void gui_Menu(const menuitem *menu) {
 			if (descriptionStart == 0)
 				descriptionStart = xTaskGetTickCount();
 			// lower the value - higher the speed
-			int16_t descriptionWidth =
+			/*int16_t descriptionWidth =
 			FONT_12_WIDTH * (strlen(menu[currentScreen].description) + 7);
-			/*int16_t descriptionOffset =
+			int16_t descriptionOffset =
 					((xTaskGetTickCount() - descriptionStart)
-							/ (systemSettings.descriptionScrollSpeed == 1 ?
-									10 : 20));
+							/ 10);//(systemSettings.descriptionScrollSpeed == 1 ? 10 : 20));
 			descriptionOffset %= descriptionWidth;	// Roll around at the end
 			if (lastOffset != descriptionOffset) {
 				OLED_clearScreen();
@@ -333,8 +323,7 @@ void gui_Menu(const menuitem *menu) {
 
 		switch (buttons) {
 			case BUTTON_BOTH:
-				earlyExit = true;  // will make us exit next loop
-				descriptionStart = 0;
+				//saveSettings();
 				break;
 			case BUTTON_R_SHORT:
 				// increment
@@ -390,6 +379,12 @@ void gui_Menu(const menuitem *menu) {
 				break;
 		}
 
+		if ((PRESS_ACCEL_INTERVAL_MAX - autoRepeatAcceleration) <
+		PRESS_ACCEL_INTERVAL_MIN) {
+			autoRepeatAcceleration =
+			PRESS_ACCEL_INTERVAL_MAX - PRESS_ACCEL_INTERVAL_MIN;
+		}
+
 		if (lcdRefresh) {
 			OLED_refresh();  // update the OLED screen
 			osDelay(40);
@@ -406,6 +401,6 @@ void gui_Menu(const menuitem *menu) {
 
 void enterRootMenu() {
 	gui_Menu(rootMenu);  // Call the root menu
-	systemSettings.isFirstStart = false;
+	systemSettings.isFirstStart = 0;
 	saveSettings();
 }

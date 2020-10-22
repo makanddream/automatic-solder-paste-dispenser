@@ -30,5 +30,8 @@ typedef enum ButtonState_t {
 
 //Returns what buttons are pressed (if any)
 ButtonState getButtonState();
+//Helpers
+void waitForButtonPressOrTimeout(uint32_t timeout);
+void waitForButtonPress();
 
 #endif /* INC_BUTTONS_H_ */
