@@ -156,7 +156,6 @@
 							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.symbolsrec.1678626302" name="MCU Output Converter Motorola S-rec with symbols" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.symbolsrec.447382668"/>
 						</toolChain>
 					</folderInfo>
-					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.563551679.1391535492" name="OLED_SSD1306.h" rcbsApplicability="disable" resourcePath="BSP/Inc/OLED_SSD1306.h" toolsToInvoke=""/>
 					<sourceEntries>
 						<entry excluding="Src/freertos_backup.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="BSP/CubeMXGeneration"/>
 						<entry excluding="OLED_SSD1306.h" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="BSP/Inc"/>
@@ -324,7 +323,6 @@
 							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.symbolsrec.2017902397" name="MCU Output Converter Motorola S-rec with symbols" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.symbolsrec.199589174"/>
 						</toolChain>
 					</folderInfo>
-					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.563551679.604977490.BSP/Inc/OLED_SSD1306.h" name="OLED_SSD1306.h" rcbsApplicability="disable" resourcePath="BSP/Inc/OLED_SSD1306.h" toolsToInvoke=""/>
 					<sourceEntries>
 						<entry excluding="Src/freertos_backup.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="BSP/CubeMXGeneration"/>
 						<entry excluding="OLED_SSD1306.h" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="BSP/Inc"/>
