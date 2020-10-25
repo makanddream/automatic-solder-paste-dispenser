@@ -96,19 +96,39 @@ var def =
 			"default": "Settings were\nreset!"
 		},
 		{
-			"id": "Test1",
+			"id": "Mode1",
 			"maxLen": 8,
-			"default": "Test1"
+			"default": "Mode 1"
 		},
 		{
-			"id": "Test2",
+			"id": "Mode2",
 			"maxLen": 8,
-			"default": "Test2"
+			"default": "Mode 2"
 		},
 		{
 			"id": "UserConfirmation",
 			"maxLen": 8
 		}		
+	],
+	"metricCode": [
+		{
+			"id": "ModeMenu",
+			"maxLen": 11
+		},
+		{
+			"id": "SettingsMenu",
+			"maxLen": 11
+		}
+	],
+	"imperialCode": [
+		{
+			"id": "ModeMenu",
+			"maxLen": 11
+		},
+		{
+			"id": "SettingsMenu",
+			"maxLen": 11
+		}
 	],
 	"menuRootGroups": [
 		{

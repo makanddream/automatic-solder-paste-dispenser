@@ -12,6 +12,7 @@
 #include "Translation.h"
 #include "cmsis_os.h"
 #include "../../configuration.h"
+#include "Settings.h"
 
 OLED_t OLED;
 
@@ -36,7 +37,7 @@ uint8_t OLED_Setup_Array[] = {
 	CMD_TYPE, 0x8D, 										/* Charge Pump */
 	CMD_TYPE, 0x14, 										/* Charge Pump settings */
 	CMD_TYPE, CMD_SET_COM_PINS_HW_CONFIG, CMD_TYPE, 0x02, 	/*Set COM Pins Hardware Config for 128x32 is 0x02 */
-	CMD_TYPE, CMD_SET_CONTRAST_CONTROL, CMD_TYPE, 0x7F, 	/* Contrast to 100% */
+	CMD_TYPE, CMD_SET_CONTRAST_CONTROL, CMD_TYPE, 0xFF, 	/* Contrast to 100% */
 	CMD_TYPE, 0xD9, 										/* Set pre-charge period */
 	CMD_TYPE, 0xF1, 										/* Pre charge period */
 	//CMD_TYPE, 0xF1, /* Pre charge period */
@@ -52,6 +53,7 @@ uint8_t OLED_Setup_Array[] = {
 
 const uint8_t REFRESH_COMMANDS[] = {
 	CMD_TYPE, CMD_DISPLAY_ON, /* Display on */
+	CMD_TYPE, CMD_SET_CONTRAST_CONTROL, CMD_TYPE, 0x00, 	/* Contrast to 100% */
 	CMD_TYPE, CMD_SET_COLUMN_ADDRESS, CMD_TYPE, 0x00, CMD_TYPE, 0x7F, 	/* Setup column start and end address */
 	CMD_TYPE, CMD_SET_MEMORY_ADDRESSING_MODE, CMD_TYPE, 0x00, 			/* Set Memory Addressing Mode to Horizontal Addressing Mode */
 	CMD_TYPE, CMD_SET_PAGE_ADDRESS, CMD_TYPE, 0x00, CMD_TYPE, 0x03, 	/* Setup page start and end address */
@@ -96,6 +98,8 @@ void OLED_initialize() {
 	// Initialization data to the OLED.
 
 	OLED_setDisplayState(ON);
+	OLED_setDisplayContrast(systemSettings.contrast); // 50%
+
 	FRToSI2C_Transmit(DEVICEADDR_OLED, &OLED_Setup_Array[0],
 			sizeof(OLED_Setup_Array));
 }
@@ -110,6 +114,12 @@ void OLED_refresh() {
 void OLED_setDisplayState(DisplayState state) {
 	OLED.displayState = state;
 	OLED.screenBuffer[1] = (state == ON) ? CMD_DISPLAY_ON : CMD_DISPLAY_OFF;
+}
+
+//
+void OLED_setDisplayContrast(uint8_t value) {
+	OLED.displayContrast = (value*255) / 100;
+	OLED.screenBuffer[5] = OLED.displayContrast;
 }
 
 // Get the current rotation of the LCD

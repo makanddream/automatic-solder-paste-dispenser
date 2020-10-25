@@ -18,7 +18,7 @@ volatile systemSettingsType systemSettings;
 
 void saveSettings() {
 	// First we erase the flash
-	//flash_save_buffer((uint8_t*) &systemSettings, sizeof(systemSettingsType));
+	flash_save_buffer((uint8_t*) &systemSettings, sizeof(systemSettingsType));
 }
 
 bool restoreSettings() {
@@ -44,6 +44,8 @@ void resetSettings() {
 	systemSettings.contrast =		CONSTRAST_VALUE; // The default contrast is 50%
 	systemSettings.isFirstStart =	FIRST_START;  // TODO
 	systemSettings.modeType =		DEFAULT_MODE; //TODO
+
+	systemSettings.descriptionScrollSpeed = DESCRIPTION_SCROLL_SPEED; // default to slow
 
 	saveSettings();  // Save defaults
 }

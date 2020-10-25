@@ -24,9 +24,10 @@ typedef struct {
 
 
 	uint8_t SleepTime;       // minutes timeout to sleep
-	uint16_t contrast;  // contrast value
+	uint8_t contrast;  // contrast value
 	uint16_t isFirstStart;  // contrast value
 	uint8_t modeType;
+	uint8_t descriptionScrollSpeed :1;  // Description scroll speed
 
 	uint32_t padding;  // This is here for in case we are not an even divisor so
 					   // that nothing gets cut off

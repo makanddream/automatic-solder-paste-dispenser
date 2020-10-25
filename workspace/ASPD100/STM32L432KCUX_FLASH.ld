@@ -35,7 +35,7 @@ _Min_Stack_Size = 0x400 ;	/* required amount of stack */
 
 __FLASH_SIZE__ = 256K;
 __APP_BASE_ADDRESS__ = 0x08000000;
-__FLASH_END_ADDR__ = 0x0803FFFF;
+__FLASH_END_ADDR__ = 0x08040000;
 
 /* Memories definition */
 MEMORY
@@ -142,7 +142,7 @@ SECTIONS
 
   .settings_page (NOLOAD) :
   {
-    . = ABSOLUTE(__FLASH_END_ADDR__ - 1024);
+    . = ABSOLUTE(__FLASH_END_ADDR__ - 2048);
     KEEP (*(.settings_page*))
   } > FLASH
 

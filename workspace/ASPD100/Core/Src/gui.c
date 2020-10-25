@@ -88,8 +88,8 @@ const menuitem SettingsMenu[] = {
 	 *		- Automatic solder paste dispenser option
 	 *		- Vacuum pick-up mode option
 	 */
-	{ (const char*) &SettingsDescriptions[15], settings_setContrast, settings_displayContrast }, /* Scroll Speed for descriptions */
-	{ (const char*) &SettingsDescriptions[15], settings_setResetSettings, settings_displayResetSettings }, /* Scroll Speed for descriptions */
+	{ (const char*) &SettingsDescriptions[02], settings_setContrast, settings_displayContrast }, /* Scroll Speed for descriptions */
+	{ (const char*) &SettingsDescriptions[03], settings_setResetSettings, settings_displayResetSettings }, /* Scroll Speed for descriptions */
 
 	{ NULL, NULL, NULL }	// end of menu marker. DO NOT REMOVE
 };
@@ -98,7 +98,7 @@ static void printShortDescriptionDoubleLine(uint32_t shortDescIndex) {
 	OLED_setFont(1);
 	OLED_setCharCursor(0, 0);
 	OLED_print(SettingsShortNames[shortDescIndex][0]);
-	OLED_setCharCursor(0, 4);
+	OLED_setCharCursor(0, 1);
 	OLED_print(SettingsShortNames[shortDescIndex][1]);
 }
 
@@ -192,11 +192,28 @@ static void settings_displayVacuumPickUp(void) {
 
 /* Start functions of the settings menu options */
 static bool settings_setContrast(void) {
-	return true;
+	if (systemSettings.contrast > 100) {
+		systemSettings.contrast = 0;  // loop back at 255
+	} else {
+		systemSettings.contrast += 10;  // Go up 10C at a time
+	}
+	osDelay(25);
+	return systemSettings.contrast == 100;
 }
 
 static void settings_displayContrast(void) {
 	printShortDescription(2, 0);
+
+	OLED_setCharCursor(6, 0);
+
+	if(systemSettings.contrast == 100){
+		OLED_printNumber(systemSettings.contrast, 3, true);
+	}else{
+		OLED_printNumber(systemSettings.contrast, 2, true);
+	}
+
+	OLED_setCharCursor(9, 0);
+	OLED_print(SymbolPrc);
 }
 
 static bool settings_setResetSettings(void) {
@@ -299,20 +316,20 @@ void gui_Menu(const menuitem *menu) {
 			if (descriptionStart == 0)
 				descriptionStart = xTaskGetTickCount();
 			// lower the value - higher the speed
-			/*int16_t descriptionWidth =
+			int16_t descriptionWidth =
 			FONT_12_WIDTH * (strlen(menu[currentScreen].description) + 7);
 			int16_t descriptionOffset =
 					((xTaskGetTickCount() - descriptionStart)
-							/ 10);//(systemSettings.descriptionScrollSpeed == 1 ? 10 : 20));
+							/ (systemSettings.descriptionScrollSpeed == 1 ?
+									10 : 20));
 			descriptionOffset %= descriptionWidth;	// Roll around at the end
 			if (lastOffset != descriptionOffset) {
 				OLED_clearScreen();
 				OLED_setCursor((OLED_WIDTH - descriptionOffset), 0);
 				OLED_print(menu[currentScreen].description);
-				OLED_print(SleepingAdvancedString);
 				lastOffset = descriptionOffset;
 				lcdRefresh = true;
-			}*/
+			}
 		}
 
 		ButtonState buttons = getButtonState();

@@ -140,7 +140,8 @@ static void gui_automaticSolderPasteDispenserMode(void) {
 	for (;;) {
 		OLED_setFont(0);
 		OLED_setCursor(0, 0);
-		OLED_print(Test1);
+		OLED_clearScreen();
+		OLED_print(Mode1);
 
 		ButtonState buttons = getButtonState();
 
@@ -149,20 +150,17 @@ static void gui_automaticSolderPasteDispenserMode(void) {
 				// stay
 				break;
 			case BUTTON_BOTH:
-				// exit
-				return;
-				break;
-			case BUTTON_R_LONG:
-				//return;  // exit on back long hold
-				resetSettings();
 				saveSettings();
 				break;
+			case BUTTON_R_LONG:
+				break;
 			case BUTTON_L_LONG:
-				systemSettings.modeType = 2;
+				// Exit this menu
+				return;
 				break;
 			case BUTTON_R_SHORT:
-			case BUTTON_L_SHORT: {
-			}
+				break;
+			case BUTTON_L_SHORT:
 				break;
 			default:
 				break;
@@ -192,7 +190,8 @@ static void gui_vacuumPickUpMode(void) {
 	for (;;) {
 		OLED_setFont(0);
 		OLED_setCursor(0, 0);
-		OLED_print(Test2);
+		OLED_clearScreen();
+		OLED_print(Mode2);
 
 		ButtonState buttons = getButtonState();
 
@@ -201,20 +200,17 @@ static void gui_vacuumPickUpMode(void) {
 				// stay
 				break;
 			case BUTTON_BOTH:
-				// exit
-				return;
-				break;
-			case BUTTON_R_LONG:
-				//return;  // exit on back long hold
-				resetSettings();
 				saveSettings();
 				break;
+			case BUTTON_R_LONG:
+				break;
 			case BUTTON_L_LONG:
-				systemSettings.modeType = 1;
+				// Exit this menu
+				return;
 				break;
 			case BUTTON_R_SHORT:
-			case BUTTON_L_SHORT: {
-			}
+				break;
+			case BUTTON_L_SHORT:
 				break;
 			default:
 				break;
@@ -241,13 +237,15 @@ void StartGUITask(void *argument)
 	OLED_initialize();  // start up the OLED screen
 
 	bool buttonLockout = false;
+	bool alreadyStarted = false;
 
 	for (;;) {
-#if 0
-		if(systemSettings.isFirstStart){
+#if 1
+		if(systemSettings.isFirstStart || alreadyStarted){
 			enterRootMenu();  // enter the settings menu
 			buttonLockout = true;
 		}else{
+			alreadyStarted = true;
 			if(systemSettings.modeType == 1){
 				// Mode = Automatic Solder Paste Dispenser
 				gui_automaticSolderPasteDispenserMode();
@@ -256,7 +254,7 @@ void StartGUITask(void *argument)
 				gui_vacuumPickUpMode();
 			}
 		}
-#elif 1
+#elif 0
 		enterRootMenu();  // enter the settings menu
 		buttonLockout = true;
 #elif 0

@@ -110,6 +110,7 @@ def getConstants():
     # Extra constants that are used in the firmware that are shared across all languages
     consants = []
     consants.append(('SymbolPlus', '+'))
+    consants.append(('SymbolPrc', '%'))
     consants.append(('SymbolMinus', '-'))
     consants.append(('SymbolSpace', ' '))
     consants.append(('SymbolDot', '.'))

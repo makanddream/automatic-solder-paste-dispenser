@@ -1,2 +1,2 @@
-make_translation.py C:\Users\Alan\Documents\views\automatic-solder-paste-dispenser\Translation_Editor
+python make_translation.py
 PAUSE

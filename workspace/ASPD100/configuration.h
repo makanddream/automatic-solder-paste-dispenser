@@ -15,6 +15,11 @@
 #define DEFAULT_MODE         1        // Default mode is automatic solder paste dispenser
 
 /**
+ * Default gui settings
+ */
+#define DESCRIPTION_SCROLL_SPEED  0         // 0: Slow 1: Fast - default to slow
+
+/**
  * Default screen settings
  */
 #define CONSTRAST_VALUE          50        // Default constrast value is 50%

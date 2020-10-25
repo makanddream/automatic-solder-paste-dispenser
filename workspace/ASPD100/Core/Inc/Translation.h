@@ -43,7 +43,9 @@ extern const char *SettingFastChar;
 extern const char *SettingSlowChar;
 extern const char *TipModelStrings[];
 extern const char *DebugMenu[];
+
 extern const char *SymbolPlus;
+extern const char *SymbolPrc;
 extern const char *SymbolMinus;
 extern const char *SymbolSpace;
 extern const char *SymbolDot;
@@ -56,8 +58,8 @@ extern const char *SymbolDC;
 extern const char *SymbolCellCount;
 extern const char *SymbolVersionNumber;
 
-extern const char *Test1;
-extern const char *Test2;
+extern const char *Mode1;
+extern const char *Mode2;
 extern const char *UserConfirmation;
 
 extern const char *DebugMenu[];

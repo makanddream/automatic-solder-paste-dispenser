@@ -34,6 +34,8 @@ void OLED_refresh(); // Draw the buffer out to the LCD using the DMA Channel
 
 void OLED_setDisplayState(DisplayState state);
 
+void OLED_setDisplayContrast(uint8_t value);
+
 void OLED_setRotation(bool leftHanded); // Set the rotation for the screen
 
 // Get the current rotation of the LCD
@@ -97,6 +99,7 @@ typedef struct {
 
 	bool inLeftHandedMode; // Whether the screen is in left or not (used for offsets in GRAM)
 	DisplayState displayState;
+	uint8_t displayContrast;
 	uint8_t fontWidth, fontHeight;
 	int16_t cursor_x, cursor_y;
 	uint8_t displayOffset;

@@ -25,8 +25,8 @@
 		"ResetOKMessage": "Reset OK",
 		"YourGainMessage": "Your gain:",
 		"SettingsResetMessage": "Settings were\nreset!",
-		"Test1": "Test1",
-		"Test2": "Test2",
+		"Mode1": "Automatic Solder Paste Dispenser",
+		"Mode2": "Vacuum Pick-Up",
 		"UserConfirmation": "User Confirmation"
 	},
 	"menuRootGroups": {
@@ -62,17 +62,17 @@
 		},
 		"Contrast": {
 			"text2": [
-				"Contrast",
-				""
+				"Display",
+				"Contrast"
 			],
 			"desc": "Contrast 0% - 100%"
 		},
 		"SettingsReset": {
 			"text2": [
-				"Settings",
-				"Reset"
+				"Factory",
+				"Reset?"
 			],
-			"desc": "Shutdown timeout <Minutes>"
+			"desc": "Reset all settings!"
 		}
 	}
 }
