@@ -15,7 +15,7 @@ extern const uint8_t USER_FONT_6x8[];
  * use SettingsShortNames as SettingsShortNames[16][1].. second column undefined
  */
 extern const char *SettingsShortNames[28][2];
-extern const char *SettingsDescriptions[28];
+extern const char SettingsDescriptions[28][50];
 extern const char *RootMenuEntries[2];
 
 extern const char *SettingsResetWarning;

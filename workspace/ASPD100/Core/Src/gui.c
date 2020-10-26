@@ -70,14 +70,12 @@ const menuitem rootMenu[] = {
 	{ NULL, NULL, NULL }	// end of menu marker. DO NOT REMOVE
 };
 
-const menuitem ModeMenu[] = {
-	/*
-	 * 	Mode menu options :
-	 *		- Automatic solder paste dispenser option
-	 *		- Vacuum pick-up mode option
-	 */
-	{ (const char*) &SettingsDescriptions[8], settings_setAutomaticSolderPasteDispenser, settings_displayAutomaticSolderPasteDispenser }, /* Automatic solder paste dispenser mode */
-	{ (const char*) &SettingsDescriptions[9], settings_setVacuumPickUp, settings_displayVacuumPickUp }, /* Vacuum pick-up mode */
+//const char *tests = test;
+
+menuitem ModeMenu[] = {
+
+	{ (const char*) SettingsDescriptions[0], settings_setAutomaticSolderPasteDispenser, settings_displayAutomaticSolderPasteDispenser },
+	{ (const char*) SettingsDescriptions[1], settings_setVacuumPickUp, settings_displayVacuumPickUp },
 
 	{ NULL, NULL, NULL }	// end of menu marker. DO NOT REMOVE
 };
@@ -88,8 +86,8 @@ const menuitem SettingsMenu[] = {
 	 *		- Automatic solder paste dispenser option
 	 *		- Vacuum pick-up mode option
 	 */
-	{ (const char*) &SettingsDescriptions[02], settings_setContrast, settings_displayContrast }, /* Scroll Speed for descriptions */
-	{ (const char*) &SettingsDescriptions[03], settings_setResetSettings, settings_displayResetSettings }, /* Scroll Speed for descriptions */
+	{ (const char*) SettingsDescriptions[2], settings_setContrast, settings_displayContrast }, /* Scroll Speed for descriptions */
+	{ (const char*) SettingsDescriptions[3], settings_setResetSettings, settings_displayResetSettings }, /* Scroll Speed for descriptions */
 
 	{ NULL, NULL, NULL }	// end of menu marker. DO NOT REMOVE
 };
@@ -302,12 +300,12 @@ void gui_Menu(const menuitem *menu) {
 	}
 
 	while ((menu[currentScreen].draw != NULL) && earlyExit == false) {
-		//OLED_setFont(0);
-		//OLED_setCursor(0, 0);
+		OLED_setFont(0);
+		OLED_setCursor(0, 0);
 		// If the user has hesitated for >=3 seconds, show the long text
 		// Otherwise "draw" the option
 		if ((xTaskGetTickCount() - lastButtonTime < 3000)
-				) {
+				|| menu[currentScreen].description == NULL) {
 			OLED_clearScreen();
 			menu[currentScreen].draw();
 			lcdRefresh = true;

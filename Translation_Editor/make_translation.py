@@ -297,7 +297,7 @@ def writeLanguage(languageCode, defs, f):
 
     # ----- Writing SettingsDescriptions
     obj = lang['menuOptions']
-    f.write(to_unicode("const char* SettingsDescriptions[] = {\n"))
+    f.write(to_unicode("const char SettingsDescriptions[][50] = {\n"))
 
     maxLen = 25
     index =0
