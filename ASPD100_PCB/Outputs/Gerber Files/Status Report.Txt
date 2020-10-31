@@ -1,0 +1,10 @@
+Output: Bill of Materials
+Type  : BOM
+From  : Variant [[No Variations]] of Project [ASPD100_PCB.PrjPcb]
+   Generated File[Bill of Materials-ASPD100_PCB.xlsx]
+
+
+Files Generated   : 1
+Documents Printed : 0
+
+Finished Output Generation At 10:26:34 On 31/10/2020
