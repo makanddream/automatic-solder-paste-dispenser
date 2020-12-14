@@ -55,6 +55,7 @@ I want something in between these two methods for these reasons:
 
 * STM32L432kc
 * 0.91 Inch OLED I2C Display SSD1306, 128x32
+* JS1400AFQ
 
 ## Tests
 

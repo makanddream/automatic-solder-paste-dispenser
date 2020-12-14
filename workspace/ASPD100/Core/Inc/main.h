@@ -77,8 +77,16 @@ void startGUITask(void *argument);
 #define VCP_TX_GPIO_Port GPIOA
 #define rightButton_Pin GPIO_PIN_3
 #define rightButton_GPIO_Port GPIOA
+#define rightButton_EXTI_IRQn EXTI3_IRQn
 #define leftButton_Pin GPIO_PIN_4
 #define leftButton_GPIO_Port GPIOA
+#define leftButton_EXTI_IRQn EXTI4_IRQn
+#define upButton_Pin GPIO_PIN_5
+#define upButton_GPIO_Port GPIOA
+#define downButton_Pin GPIO_PIN_6
+#define downButton_GPIO_Port GPIOA
+#define centerButton_Pin GPIO_PIN_7
+#define centerButton_GPIO_Port GPIOA
 #define I2C1_SCL_Pin GPIO_PIN_9
 #define I2C1_SCL_GPIO_Port GPIOA
 #define I2C1_SDA_Pin GPIO_PIN_10

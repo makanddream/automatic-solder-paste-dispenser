@@ -87,8 +87,24 @@ uint8_t getButtonA() {
 	return HAL_GPIO_ReadPin(rightButton_GPIO_Port, rightButton_Pin) == GPIO_PIN_RESET ?
 			1 : 0;
 }
+
 uint8_t getButtonB() {
 	return HAL_GPIO_ReadPin(leftButton_GPIO_Port, leftButton_Pin) == GPIO_PIN_RESET ?
+			1 : 0;
+}
+
+uint8_t getButtonC() {
+	return HAL_GPIO_ReadPin(upButton_GPIO_Port, upButton_Pin) == GPIO_PIN_RESET ?
+			1 : 0;
+}
+
+uint8_t getButtonD() {
+	return HAL_GPIO_ReadPin(downButton_GPIO_Port, downButton_Pin) == GPIO_PIN_RESET ?
+			1 : 0;
+}
+
+uint8_t getButtonE() {
+	return HAL_GPIO_ReadPin(centerButton_GPIO_Port, centerButton_Pin) == GPIO_PIN_RESET ?
 			1 : 0;
 }
 

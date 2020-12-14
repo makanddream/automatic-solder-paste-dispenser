@@ -14,12 +14,17 @@
 extern uint32_t lastButtonTime;
 
 typedef enum ButtonState_t {
-	BUTTON_NONE = 0, /* No buttons pressed / < filter time*/
-	BUTTON_R_SHORT = 1, /* User has pressed the front button*/
-	BUTTON_L_SHORT = 2, /* User has pressed the back  button*/
-	BUTTON_R_LONG = 4, /* User is  holding the front button*/
-	BUTTON_L_LONG = 8, /* User is  holding the back button*/
-	BUTTON_BOTH = 16, /* User has pressed both buttons*/
+	BUTTON_NONE, /* No buttons pressed / < filter time*/
+	BUTTON_R_SHORT, /* User has pressed the right button*/
+	BUTTON_L_SHORT, /* User has pressed the left button*/
+	BUTTON_UP_SHORT, /* User is  holding the up button*/
+	BUTTON_DOWN_SHORT, /* User is  holding the down button*/
+	BUTTON_CENTER_SHORT, /* User is  holding the center button*/
+	BUTTON_R_LONG, /* User is  holding the right button*/
+	BUTTON_L_LONG, /* User is  holding the left button*/
+	BUTTON_UP_LONG, /* User is  holding the up button*/
+	BUTTON_DOWN_LONG, /* User is  holding the down button*/
+	BUTTON_CENTER_LONG, /* User is  holding the center button*/
 
 /*
  * Note:

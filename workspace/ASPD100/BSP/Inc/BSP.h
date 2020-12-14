@@ -19,6 +19,9 @@ void resetWatchdog();
 // !! Returns 1 if held down, 0 if released
 uint8_t getButtonA();
 uint8_t getButtonB();
+uint8_t getButtonC();
+uint8_t getButtonD();
+uint8_t getButtonE();
 
 // This is a work around that will be called if I2C starts to bug out
 // This should toggle the SCL line until SDA goes high to end the current transaction
