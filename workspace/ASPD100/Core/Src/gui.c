@@ -32,6 +32,8 @@ static void settings_displayVacuumPickUp(void);
 /* Functions of the settings menu options */
 static bool settings_setContrast(void);
 static void settings_displayContrast(void);
+static bool settings_setScrollSpeed(void);
+static void settings_displayScrollSpeed(void);
 static bool settings_setResetSettings(void);
 static void settings_displayResetSettings(void);
 
@@ -74,8 +76,8 @@ const menuitem rootMenu[] = {
 
 menuitem ModeMenu[] = {
 
-	{ (const char*) SettingsDescriptions[0], settings_setAutomaticSolderPasteDispenser, settings_displayAutomaticSolderPasteDispenser },
-	{ (const char*) SettingsDescriptions[1], settings_setVacuumPickUp, settings_displayVacuumPickUp },
+	{ (const char*) SettingsDescriptions[0], settings_setAutomaticSolderPasteDispenser, settings_displayAutomaticSolderPasteDispenser }, /* Automatic solder paste dispenser mode */
+	{ (const char*) SettingsDescriptions[1], settings_setVacuumPickUp, settings_displayVacuumPickUp }, /* Vacuum pick-up mode */
 
 	{ NULL, NULL, NULL }	// end of menu marker. DO NOT REMOVE
 };
@@ -87,7 +89,8 @@ const menuitem SettingsMenu[] = {
 	 *		- Vacuum pick-up mode option
 	 */
 	{ (const char*) SettingsDescriptions[2], settings_setContrast, settings_displayContrast }, /* Scroll Speed for descriptions */
-	{ (const char*) SettingsDescriptions[3], settings_setResetSettings, settings_displayResetSettings }, /* Scroll Speed for descriptions */
+	{ (const char*) SettingsDescriptions[3], settings_setScrollSpeed, settings_displayScrollSpeed }, /* Scroll Speed for descriptions */
+	{ (const char*) SettingsDescriptions[4], settings_setResetSettings, settings_displayResetSettings }, /* Resets settings */
 
 	{ NULL, NULL, NULL }	// end of menu marker. DO NOT REMOVE
 };
@@ -154,7 +157,6 @@ static int userConfirmation(const char *message) {
 		case BUTTON_R_LONG:
 			break;
 		default:
-		case BUTTON_BOTH:
 		case BUTTON_L_SHORT:
 			return 0;
 		}
@@ -212,6 +214,21 @@ static void settings_displayContrast(void) {
 
 	OLED_setCharCursor(9, 0);
 	OLED_print(SymbolPrc);
+}
+
+static bool settings_setScrollSpeed(void) {
+	if (systemSettings.descriptionScrollSpeed == 0)
+		systemSettings.descriptionScrollSpeed = 1;
+	else
+		systemSettings.descriptionScrollSpeed = 0;
+	return false;
+}
+
+static void settings_displayScrollSpeed(void) {
+	printShortDescription(3, 7);
+	OLED_print(
+			(systemSettings.descriptionScrollSpeed) ?
+					SettingFastChar : SettingSlowChar);
 }
 
 static bool settings_setResetSettings(void) {
@@ -337,9 +354,6 @@ void gui_Menu(const menuitem *menu) {
 		}
 
 		switch (buttons) {
-			case BUTTON_BOTH:
-				//saveSettings();
-				break;
 			case BUTTON_R_SHORT:
 				// increment
 				if (descriptionStart == 0) {

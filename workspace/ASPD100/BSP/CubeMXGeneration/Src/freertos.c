@@ -149,9 +149,6 @@ static void gui_automaticSolderPasteDispenserMode(void) {
 			case BUTTON_NONE:
 				// stay
 				break;
-			case BUTTON_BOTH:
-				saveSettings();
-				break;
 			case BUTTON_R_LONG:
 				break;
 			case BUTTON_L_LONG:
@@ -198,9 +195,6 @@ static void gui_vacuumPickUpMode(void) {
 		switch (buttons) {
 			case BUTTON_NONE:
 				// stay
-				break;
-			case BUTTON_BOTH:
-				saveSettings();
 				break;
 			case BUTTON_R_LONG:
 				break;
