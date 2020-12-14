@@ -110,6 +110,44 @@ var def =
 			"maxLen": 8
 		}		
 	],
+	"characters": [
+		{
+			"id": "SettingRightChar",
+			"len": 1
+		},
+		{
+			"id": "SettingLeftChar",
+			"len": 1
+		},
+		{
+			"id": "SettingAutoChar",
+			"len": 1
+		},
+		{
+			"id": "SettingFastChar",
+			"len": 1
+		},
+		{
+			"id": "SettingSlowChar",
+			"len": 1
+		},
+		{
+			"id": "SettingStartSolderingChar",
+			"len": 1
+		},
+		{
+			"id": "SettingStartSleepChar",
+			"len": 1
+		},
+		{
+			"id": "SettingStartSleepOffChar",
+			"len": 1
+		},
+		{
+			"id": "SettingStartNoneChar",
+			"len": 1
+		}
+	],
 	"metricCode": [
 		{
 			"id": "ModeMenu",
@@ -155,6 +193,11 @@ var def =
 			"id": "Contrast",
 			"maxLen": 4,
 			"maxLen2": 9
+		},
+		{
+			"id": "ScrollingSpeed",
+			"maxLen": 6,
+			"maxLen2": 11
 		},
 		{
 			"id": "SettingsReset",

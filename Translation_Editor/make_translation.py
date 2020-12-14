@@ -154,6 +154,13 @@ def getLetterCounts(defs, lang):
         else:
             textList.append(obj[eid])
 
+	#### characters ####
+    obj = lang['characters']
+
+    for mod in defs['characters']:
+        eid = mod['id']
+        textList.append(obj[eid])
+
 	#### menuRootGroups ####
     obj = lang['menuRootGroups']
     for mod in defs['menuRootGroups']:
@@ -331,6 +338,18 @@ def writeLanguage(languageCode, defs, f):
         f.write(
             to_unicode("const char* " + eid + " = \"" +
                        translatedText + "\";" + "//{} \n".format(sourceText.replace('\n', '_'))))
+
+    f.write(to_unicode("\n"))
+
+    # ----- Writing Characters
+
+    obj = lang['characters']
+
+    for mod in defs['characters']:
+        eid = mod['id']
+        f.write(
+            to_unicode("const char* " + eid + " = \"" +
+                       convStr(symbolConversionTable, obj[eid]) + "\";" + "//{} \n".format(obj[eid])))
 
     f.write(to_unicode("\n"))
 

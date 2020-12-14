@@ -29,6 +29,17 @@
 		"Mode2": "Vacuum Pick-Up",
 		"UserConfirmation": "User Confirmation"
 	},
+	"characters": {
+		"SettingRightChar": "R",
+		"SettingLeftChar": "L",
+		"SettingAutoChar": "A",
+		"SettingFastChar": "F",
+		"SettingSlowChar": "S",
+		"SettingStartSolderingChar": "T",
+		"SettingStartSleepChar": "S",
+		"SettingStartSleepOffChar": "O",
+		"SettingStartNoneChar": "F"
+	},
 	"menuRootGroups": {
 		"ModeMenu": {
 			"text2": [
@@ -66,6 +77,13 @@
 				"Contrast"
 			],
 			"desc": "Contrast 0% - 100%"
+		},
+		"ScrollingSpeed": {
+			"text2": [
+				"Scrolling",
+				"speed"
+			],
+			"desc": "Speed this text scrolls past at <S=Slow F=Fast>"
 		},
 		"SettingsReset": {
 			"text2": [
