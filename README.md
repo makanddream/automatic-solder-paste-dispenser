@@ -34,7 +34,9 @@ Each time I create a new PCB with CMS components I have two methods to apply the
 #### Method 2 : Syringe to apply the solder paste.
 
 * Avantage:
-	* No hardware is needed to apply the solder paste.
+	* No raw materials is needed to create a stencil to apply the solder paste on custom PCB. 
+		* 1 syringe = x specific PCB layout.
+		* 1 stencil = 1 specific PCB layout.
 
 * Disadvantage:
 	* Uniformity more difficult.
@@ -44,7 +46,7 @@ Each time I create a new PCB with CMS components I have two methods to apply the
 #### Conclusion
 I want something in between these two methods for these reasons:
 * Reduce the hardship of the second method
-* Reduce the use of raw material used to create a stencil
+* Reduce the use of raw material used to create a stencil for each new PCB layout.
 	
 ## Requirements
 
@@ -56,6 +58,7 @@ I want something in between these two methods for these reasons:
 * STM32L432kc
 * 0.91 Inch OLED I2C Display SSD1306, 128x32
 * JS1400AFQ
+* DRV8876 (Motor driver)
 
 ## Tests
 
