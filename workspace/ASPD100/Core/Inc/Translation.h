@@ -60,6 +60,8 @@ extern const char *SymbolVersionNumber;
 
 extern const char *Mode1;
 extern const char *Mode2;
+extern const char *FastString;
+extern const char *SlowString;
 extern const char *UserConfirmation;
 
 extern const char *DebugMenu[];

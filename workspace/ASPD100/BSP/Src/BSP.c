@@ -83,27 +83,27 @@ void unstick_I2C() {
 	HAL_I2C_Init(&hi2c1);
 }
 
-uint8_t getButtonA() {
+uint8_t getButtonRight() {
 	return HAL_GPIO_ReadPin(rightButton_GPIO_Port, rightButton_Pin) == GPIO_PIN_RESET ?
 			1 : 0;
 }
 
-uint8_t getButtonB() {
+uint8_t getButtonLeft() {
 	return HAL_GPIO_ReadPin(leftButton_GPIO_Port, leftButton_Pin) == GPIO_PIN_RESET ?
 			1 : 0;
 }
 
-uint8_t getButtonC() {
+uint8_t getButtonUp() {
 	return HAL_GPIO_ReadPin(upButton_GPIO_Port, upButton_Pin) == GPIO_PIN_RESET ?
 			1 : 0;
 }
 
-uint8_t getButtonD() {
+uint8_t getButtonDown() {
 	return HAL_GPIO_ReadPin(downButton_GPIO_Port, downButton_Pin) == GPIO_PIN_RESET ?
 			1 : 0;
 }
 
-uint8_t getButtonE() {
+uint8_t getButtonCenter() {
 	return HAL_GPIO_ReadPin(centerButton_GPIO_Port, centerButton_Pin) == GPIO_PIN_RESET ?
 			1 : 0;
 }

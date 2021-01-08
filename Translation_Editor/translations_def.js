@@ -106,6 +106,16 @@ var def =
 			"default": "Mode 2"
 		},
 		{
+			"id": "FastString",
+			"maxLen": 5,
+			"default": "FAST"
+		},
+		{
+			"id": "SlowString",
+			"maxLen": 5,
+			"default": "SLOW"
+		},
+		{
 			"id": "UserConfirmation",
 			"maxLen": 8
 		}		

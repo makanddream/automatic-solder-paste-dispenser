@@ -29,11 +29,11 @@ ButtonState getButtonState() {
 	static uint32_t previousStateChange = 0;
 	const uint16_t timeout = 400;
 	uint8_t currentState;
-	currentState = (getButtonA()) << 0;
-	currentState |= (getButtonB()) << 1;
-	currentState |= (getButtonC()) << 2;
-	currentState |= (getButtonD()) << 3;
-	currentState |= (getButtonE()) << 4;
+	currentState = (getButtonRight()) << 0;
+	currentState |= (getButtonLeft()) << 1;
+	currentState |= (getButtonUp()) << 2;
+	currentState |= (getButtonDown()) << 3;
+	currentState |= (getButtonCenter()) << 4;
 
 	if (currentState)
 		lastButtonTime = xTaskGetTickCount();

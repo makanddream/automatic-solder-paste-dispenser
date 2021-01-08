@@ -152,12 +152,25 @@ static void gui_automaticSolderPasteDispenserMode(void) {
 			case BUTTON_R_LONG:
 				break;
 			case BUTTON_L_LONG:
+				break;
+			case BUTTON_UP_LONG:
+				break;
+			case BUTTON_DOWN_LONG:
+				break;
+			case BUTTON_CENTER_LONG:
 				// Exit this menu
 				return;
 				break;
 			case BUTTON_R_SHORT:
 				break;
 			case BUTTON_L_SHORT:
+				break;
+			case BUTTON_UP_SHORT:
+				break;
+			case BUTTON_DOWN_SHORT:
+				break;
+			case BUTTON_CENTER_SHORT:
+
 				break;
 			default:
 				break;
@@ -199,12 +212,24 @@ static void gui_vacuumPickUpMode(void) {
 			case BUTTON_R_LONG:
 				break;
 			case BUTTON_L_LONG:
+				break;
+			case BUTTON_UP_LONG:
+				break;
+			case BUTTON_DOWN_LONG:
+				break;
+			case BUTTON_CENTER_LONG:
 				// Exit this menu
 				return;
 				break;
 			case BUTTON_R_SHORT:
 				break;
 			case BUTTON_L_SHORT:
+				break;
+			case BUTTON_UP_SHORT:
+				break;
+			case BUTTON_DOWN_SHORT:
+				break;
+			case BUTTON_CENTER_SHORT:
 				break;
 			default:
 				break;

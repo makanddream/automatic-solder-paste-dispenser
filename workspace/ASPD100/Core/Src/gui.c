@@ -30,7 +30,7 @@ static bool settings_setVacuumPickUp(void);
 static void settings_displayVacuumPickUp(void);
 
 /* Functions of the settings menu options */
-static bool settings_setContrast(void);
+static bool settings_setContrast(bool isInc);
 static void settings_displayContrast(void);
 static bool settings_setScrollSpeed(void);
 static void settings_displayScrollSpeed(void);
@@ -66,8 +66,8 @@ const menuitem rootMenu[] = {
 	 * Settings Menu
 	 * Exit
 	 */
-	{ (const char*) NULL, enterModeMenu, displayModeMenu }, /*Mode Menu*/
-	{ (const char*) NULL, enterSettingsMenu, displaySettingsMenu }, /*Settings Menu*/
+	{ (const char*) NULL, enterModeMenu, NULL, displayModeMenu }, /*Mode Menu*/
+	{ (const char*) NULL, enterSettingsMenu, NULL, displaySettingsMenu }, /*Settings Menu*/
 
 	{ NULL, NULL, NULL }	// end of menu marker. DO NOT REMOVE
 };
@@ -76,8 +76,8 @@ const menuitem rootMenu[] = {
 
 menuitem ModeMenu[] = {
 
-	{ (const char*) SettingsDescriptions[0], settings_setAutomaticSolderPasteDispenser, settings_displayAutomaticSolderPasteDispenser }, /* Automatic solder paste dispenser mode */
-	{ (const char*) SettingsDescriptions[1], settings_setVacuumPickUp, settings_displayVacuumPickUp }, /* Vacuum pick-up mode */
+	{ (const char*) SettingsDescriptions[0], settings_setAutomaticSolderPasteDispenser, NULL, settings_displayAutomaticSolderPasteDispenser }, /* Automatic solder paste dispenser mode */
+	{ (const char*) SettingsDescriptions[1], settings_setVacuumPickUp, NULL, settings_displayVacuumPickUp }, /* Vacuum pick-up mode */
 
 	{ NULL, NULL, NULL }	// end of menu marker. DO NOT REMOVE
 };
@@ -88,18 +88,18 @@ const menuitem SettingsMenu[] = {
 	 *		- Automatic solder paste dispenser option
 	 *		- Vacuum pick-up mode option
 	 */
-	{ (const char*) SettingsDescriptions[2], settings_setContrast, settings_displayContrast }, /* Scroll Speed for descriptions */
-	{ (const char*) SettingsDescriptions[3], settings_setScrollSpeed, settings_displayScrollSpeed }, /* Scroll Speed for descriptions */
-	{ (const char*) SettingsDescriptions[4], settings_setResetSettings, settings_displayResetSettings }, /* Resets settings */
+	{ (const char*) SettingsDescriptions[2], NULL, settings_setContrast, settings_displayContrast }, /* Scroll Speed for descriptions */
+	{ (const char*) SettingsDescriptions[3], NULL, settings_setScrollSpeed, settings_displayScrollSpeed }, /* Scroll Speed for descriptions */
+	{ (const char*) SettingsDescriptions[4], NULL, settings_setResetSettings, settings_displayResetSettings }, /* Resets settings */
 
 	{ NULL, NULL, NULL }	// end of menu marker. DO NOT REMOVE
 };
 
 static void printShortDescriptionDoubleLine(uint32_t shortDescIndex) {
 	OLED_setFont(1);
-	OLED_setCharCursor(0, 0);
-	OLED_print(SettingsShortNames[shortDescIndex][0]);
 	OLED_setCharCursor(0, 1);
+	OLED_print(SettingsShortNames[shortDescIndex][0]);
+	OLED_setCharCursor(0, 2);
 	OLED_print(SettingsShortNames[shortDescIndex][1]);
 }
 
@@ -127,7 +127,7 @@ static int userConfirmation(const char *message) {
 	uint32_t messageStart = xTaskGetTickCount();
 
 	OLED_setFont(0);
-	OLED_setCursor(0, 0);
+	OLED_setCursor(0, 8);
 	int16_t lastOffset = -1;
 	bool lcdRefresh = true;
 
@@ -140,7 +140,7 @@ static int userConfirmation(const char *message) {
 			OLED_clearScreen();
 
 			//^ Rolling offset based on time
-			OLED_setCursor((OLED_WIDTH - messageOffset), 0);
+			OLED_setCursor((OLED_WIDTH - messageOffset), 8);
 			OLED_print(message);
 			lastOffset = messageOffset;
 			lcdRefresh = true;
@@ -148,16 +148,22 @@ static int userConfirmation(const char *message) {
 
 		ButtonState buttons = getButtonState();
 		switch (buttons) {
-		case BUTTON_R_SHORT:
+		case BUTTON_CENTER_SHORT:
 			// User confirmed
 			return 1;
 
 		case BUTTON_NONE:
+		case BUTTON_L_SHORT:
+		case BUTTON_R_SHORT:
+		case BUTTON_UP_SHORT:
+		case BUTTON_DOWN_SHORT:
 		case BUTTON_L_LONG:
 		case BUTTON_R_LONG:
+		case BUTTON_UP_LONG:
+		case BUTTON_DOWN_LONG:
 			break;
 		default:
-		case BUTTON_L_SHORT:
+		case BUTTON_CENTER_LONG:
 			return 0;
 		}
 
@@ -168,6 +174,30 @@ static int userConfirmation(const char *message) {
 		}
 	}
 	return 0;
+}
+
+typedef enum ArrowState_t {
+	ARROW_UP, /* TODO */
+	ARROW_DOWN, /* TODO */
+	ARROW_EMPTY, /* TODO */
+}ArrowState;
+
+ButtonState buttonsSave;
+
+static void displayArrow(int16_t x){
+	if(buttonsSave == BUTTON_UP_SHORT){
+		OLED_drawArea(x, 0, 12, 16, (&arrow[(12 * 2) * 2])); // Arrow UP full
+		OLED_drawArea(x, 24, 12, 16, (&arrow[(12 * 2) * 1])); // Arrow DOWN empty
+	}else if(buttonsSave == BUTTON_DOWN_SHORT){
+		OLED_drawArea(x, 0, 12, 16, (&arrow[(12 * 2) * 0])); // Arrow UP empty
+		OLED_drawArea(x, 24, 12, 16, (&arrow[(12 * 2) * 3])); // Arrow DOWN full
+	}else if(buttonsSave == BUTTON_NONE){
+		OLED_drawArea(x, 0, 12, 16, (&arrow[(12 * 2) * 0])); // Arrow UP empty
+		OLED_drawArea(x, 24, 12, 16, (&arrow[(12 * 2) * 1])); // Arrow DOWN empty
+	}else{
+		// Nothing
+	}
+	osDelay(50);
 }
 
 /* Functions of the mode menu options */
@@ -191,12 +221,21 @@ static void settings_displayVacuumPickUp(void) {
 /* end */
 
 /* Start functions of the settings menu options */
-static bool settings_setContrast(void) {
-	if (systemSettings.contrast > 100) {
-		systemSettings.contrast = 0;  // loop back at 255
-	} else {
-		systemSettings.contrast += 10;  // Go up 10C at a time
+static bool settings_setContrast(bool isInc) {
+	if(isInc){
+		if (systemSettings.contrast > 100) {
+			systemSettings.contrast = 0;  // loop back at 255
+		} else {
+			systemSettings.contrast += 10;  // Go up 10C at a time
+		}
+	}else{
+		if (systemSettings.contrast == 0) {
+			systemSettings.contrast = 100;  // loop back at 255
+		} else {
+			systemSettings.contrast -= 10;  // Go up 10C at a time
+		}
 	}
+
 	osDelay(25);
 	return systemSettings.contrast == 100;
 }
@@ -204,15 +243,17 @@ static bool settings_setContrast(void) {
 static void settings_displayContrast(void) {
 	printShortDescription(2, 0);
 
-	OLED_setCharCursor(6, 0);
-
 	if(systemSettings.contrast == 100){
+		displayArrow(83);
+
+		OLED_setCursor(70, 8);
 		OLED_printNumber(systemSettings.contrast, 3, true);
 	}else{
+		displayArrow(88);
+		OLED_setCursor(81, 8);
 		OLED_printNumber(systemSettings.contrast, 2, true);
 	}
-
-	OLED_setCharCursor(9, 0);
+	OLED_setCursor(106, 8);
 	OLED_print(SymbolPrc);
 }
 
@@ -226,9 +267,15 @@ static bool settings_setScrollSpeed(void) {
 
 static void settings_displayScrollSpeed(void) {
 	printShortDescription(3, 7);
-	OLED_print(
-			(systemSettings.descriptionScrollSpeed) ?
-					SettingFastChar : SettingSlowChar);
+
+	displayArrow(85);
+
+	OLED_setCursor(70, 8);
+	if(systemSettings.descriptionScrollSpeed){
+		OLED_print(FastString);
+	}else{
+		OLED_print(SlowString);
+	}
 }
 
 static bool settings_setResetSettings(void) {
@@ -248,7 +295,7 @@ static bool settings_setResetSettings(void) {
 
 
 static void settings_displayResetSettings(void) {
-	printShortDescription(3, 0);
+	printShortDescription(4, 0);
 }
 /* end */
 
@@ -340,7 +387,7 @@ void gui_Menu(const menuitem *menu) {
 			descriptionOffset %= descriptionWidth;	// Roll around at the end
 			if (lastOffset != descriptionOffset) {
 				OLED_clearScreen();
-				OLED_setCursor((OLED_WIDTH - descriptionOffset), 0);
+				OLED_setCursor((OLED_WIDTH - descriptionOffset), 8);
 				OLED_print(menu[currentScreen].description);
 				lastOffset = descriptionOffset;
 				lcdRefresh = true;
@@ -348,6 +395,7 @@ void gui_Menu(const menuitem *menu) {
 		}
 
 		ButtonState buttons = getButtonState();
+		buttonsSave = buttons;
 
 		if (buttons != lastButtonState) {
 			lastButtonState = buttons;
@@ -377,11 +425,25 @@ void gui_Menu(const menuitem *menu) {
 				} else
 					descriptionStart = 0;
 				break;
-			case BUTTON_R_LONG:
+			case BUTTON_UP_SHORT:
+				if (menu[currentScreen].incrementHandler != NULL){
+					lastValue = menu[currentScreen].incrementHandler(true);
+				}
+				break;
+			case BUTTON_UP_LONG:
+				break;
+			case BUTTON_DOWN_SHORT:
+				if (menu[currentScreen].incrementHandler != NULL){
+					lastValue = menu[currentScreen].incrementHandler(false);
+				}
+				break;
+			case BUTTON_DOWN_LONG:
+				break;
+			case BUTTON_CENTER_SHORT:
 				if (descriptionStart == 0) {
-					if (menu[currentScreen].incrementHandler != NULL) {
+					if (menu[currentScreen].validateHandler != NULL) {
 						enterGUIMenu = false;
-						lastValue = menu[currentScreen].incrementHandler();
+						lastValue = menu[currentScreen].validateHandler();
 
 						if (enterGUIMenu) {
 							OLED_useSecondaryFramebuffer(true);
@@ -400,7 +462,7 @@ void gui_Menu(const menuitem *menu) {
 					descriptionStart = 0;
 				isSelect = true;
 				break;
-			case BUTTON_L_LONG:
+			case BUTTON_CENTER_LONG:
 				earlyExit = true;
 				break;
 			case BUTTON_NONE:

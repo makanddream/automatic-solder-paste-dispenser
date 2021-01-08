@@ -22,6 +22,8 @@ extern const uint8_t WarningBlock24[];
 
 extern const uint8_t idleScreenBG[];
 
+extern const uint8_t arrow[];
+
 /*
  * 16x16 icons
  * */

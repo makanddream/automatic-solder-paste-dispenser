@@ -123,6 +123,125 @@ void GUIDelay() {
 	osDelay(50);
 }
 
+static void gui_automaticSolderPasteDispenserMode(void) {
+	/*
+	 * * Automatic Solder Paste Dispenser (gui_automaticSolderPasteDispenserMode)
+	 * -> Main loop where we draw the footprint size, and animations
+	 * --> User presses buttons and they goto the temperature adjust screen
+	 * ---> Display the current setpoint temperature
+	 * ---> Use buttons to change forward and back on temperature
+	 * ---> Both buttons or timeout for exiting
+	 * --> Long hold front button to enter boost mode
+	 * ---> Just temporarily sets the system into the alternate temperature for
+	 * PID control
+	 * --> Long hold back button to exit
+	 * --> Double button to exit
+	 */
+	for (;;) {
+		OLED_setFont(0);
+		OLED_setCursor(0, 0);
+		OLED_clearScreen();
+		OLED_print(Mode1);
+
+		ButtonState buttons = getButtonState();
+
+		switch (buttons) {
+			case BUTTON_NONE:
+				// stay
+				break;
+			case BUTTON_R_LONG:
+				break;
+			case BUTTON_L_LONG:
+				break;
+			case BUTTON_UP_LONG:
+				break;
+			case BUTTON_DOWN_LONG:
+				break;
+			case BUTTON_CENTER_LONG:
+				// Exit this menu
+				return;
+				break;
+			case BUTTON_R_SHORT:
+				break;
+			case BUTTON_L_SHORT:
+				break;
+			case BUTTON_UP_SHORT:
+				break;
+			case BUTTON_DOWN_SHORT:
+				break;
+			case BUTTON_CENTER_SHORT:
+
+				break;
+			default:
+				break;
+		}
+
+		OLED_refresh();
+
+		// slow down ui update rate
+		GUIDelay();
+	}
+}
+
+static void gui_vacuumPickUpMode(void) {
+	/*
+	 * * Vacuum Pick-Up (gui_vacuumPickUpMode)
+	 * -> Main loop where we draw the footprint size, and animations
+	 * --> User presses buttons and they goto the temperature adjust screen
+	 * ---> Display the current setpoint temperature
+	 * ---> Use buttons to change forward and back on temperature
+	 * ---> Both buttons or timeout for exiting
+	 * --> Long hold front button to enter boost mode
+	 * ---> Just temporarily sets the system into the alternate temperature for
+	 * PID control
+	 * --> Long hold back button to exit
+	 * --> Double button to exit
+	 */
+	for (;;) {
+		OLED_setFont(0);
+		OLED_setCursor(0, 0);
+		OLED_clearScreen();
+		OLED_print(Mode2);
+
+		ButtonState buttons = getButtonState();
+
+		switch (buttons) {
+			case BUTTON_NONE:
+				// stay
+				break;
+			case BUTTON_R_LONG:
+				break;
+			case BUTTON_L_LONG:
+				break;
+			case BUTTON_UP_LONG:
+				break;
+			case BUTTON_DOWN_LONG:
+				break;
+			case BUTTON_CENTER_LONG:
+				// Exit this menu
+				return;
+				break;
+			case BUTTON_R_SHORT:
+				break;
+			case BUTTON_L_SHORT:
+				break;
+			case BUTTON_UP_SHORT:
+				break;
+			case BUTTON_DOWN_SHORT:
+				break;
+			case BUTTON_CENTER_SHORT:
+				break;
+			default:
+				break;
+		}
+
+		OLED_refresh();
+
+		// slow down ui update rate
+		GUIDelay();
+	}
+}
+
 /* USER CODE BEGIN Header_StartGUITask */
 /**
   * @brief  Function implementing the GUITask thread.
@@ -137,19 +256,37 @@ void StartGUITask(void *argument)
 	OLED_initialize();  // start up the OLED screen
 
 	bool buttonLockout = false;
+	bool alreadyStarted = false;
 
 	for (;;) {
-
 #if 1
+		if(systemSettings.isFirstStart || alreadyStarted){
+			enterRootMenu();  // enter the settings menu
+			buttonLockout = true;
+		}else{
+			alreadyStarted = true;
+			if(systemSettings.modeType == 1){
+				// Mode = Automatic Solder Paste Dispenser
+				gui_automaticSolderPasteDispenserMode();
+			}else if(systemSettings.modeType == 2){
+				// Mode = Vacuum Pick-Up
+				gui_vacuumPickUpMode();
+			}
+		}
+#elif 0
 		enterRootMenu();  // enter the settings menu
 		buttonLockout = true;
-#elif 1
+#elif 0
 		OLED_fullScreen();
 		OLED_refresh();
 		osDelay(1000);
 		OLED_clearScreen();
 		OLED_refresh();
 		osDelay(1000);
+#elif 0
+		OLED_setFont(0);
+		OLED_setCursor(0, 0);
+		OLED_print("\x1D\x16\x15\x0C");
 #else
 		ButtonState buttons = getButtonState();
 		if (buttons != BUTTON_NONE) {

@@ -51,9 +51,9 @@ void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : PAPin PAPin PAPin PAPin
-                           PAPin */
-  GPIO_InitStruct.Pin = rightButton_Pin|leftButton_Pin|upButton_Pin|downButton_Pin
-                          |centerButton_Pin;
+                           PAPin PAPin */
+  GPIO_InitStruct.Pin = upButton_Pin|rightButton_Pin|centerButton_Pin|leftButton_Pin
+                          |downButton_Pin|clickButton_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
