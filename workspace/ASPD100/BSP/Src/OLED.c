@@ -14,6 +14,8 @@
 #include "../../configuration.h"
 #include "Settings.h"
 
+//#define OLED_FLIP
+
 OLED_t OLED;
 
 /*Setup params for the OLED screen*/
@@ -27,23 +29,22 @@ uint8_t OLED_Setup_Array[] = {
 	CMD_TYPE, 0xD5, 										/* Set display clock divide ratio / osc freq */
 	//CMD_TYPE, 0x52, /* Divide ratios */
 	CMD_TYPE, 0xF0, 										/* Divide ratios */
-	CMD_TYPE, 0xA8, 										/* Set Multiplex Ratio */
-	//CMD_TYPE, 0x0F, /* 16 == max brightness,39==dimmest */
-	CMD_TYPE, 0x3F, 										/* 16 == max brightness,39==dimmest */
-	CMD_TYPE, 0xC0, 										/* Set COM Scan direction */
+	CMD_TYPE, 0xA8, CMD_TYPE, 0x3F,							/* Set Multiplex Ratio */
+#ifdef OLED_FLIP
+	CMD_TYPE, CMD_SET_SCAN_INC, 							/* Set COM Scan direction */
+	CMD_TYPE, 0xA0,											/* Set Segment remap to normal */
+	CMD_TYPE, CMD_SET_COM_PINS_HW_CONFIG, CMD_TYPE, 0x02, 	/*Set COM Pins Hardware Config for 128x32 */
+#else
+	CMD_TYPE, CMD_SET_SCAN_DEC, 							/* Set COM Scan direction */
+	CMD_TYPE, 0xA1,											/* Set Segment remap to normal */
+	CMD_TYPE, CMD_SET_COM_PINS_HW_CONFIG, CMD_TYPE, 0x20, 	/*Set COM Pins Hardware Config for 128x32 */
+#endif
 	CMD_TYPE, CMD_SET_DISPLAY_OFFSET, CMD_TYPE, 0x00, 		/* Set vertical Display offset to 0 */
 	CMD_TYPE, 0x40, 										/* Set Display start line to 0 */
-	CMD_TYPE, 0xA0, 										/* Set Segment remap to normal */
-	CMD_TYPE, 0x8D, 										/* Charge Pump */
-	CMD_TYPE, 0x14, 										/* Charge Pump settings */
-	CMD_TYPE, CMD_SET_COM_PINS_HW_CONFIG, CMD_TYPE, 0x02, 	/*Set COM Pins Hardware Config for 128x32 is 0x02 */
+	CMD_TYPE, 0x8D, CMD_TYPE, 0x14,							/* Charge Pump settings*/
 	CMD_TYPE, CMD_SET_CONTRAST_CONTROL, CMD_TYPE, 0xFF, 	/* Contrast to 100% */
-	CMD_TYPE, 0xD9, 										/* Set pre-charge period */
-	CMD_TYPE, 0xF1, 										/* Pre charge period */
-	//CMD_TYPE, 0xF1, /* Pre charge period */
-	CMD_TYPE, 0x22, 										/* Pre charge period */
-	CMD_TYPE, 0xDB, 										/* Adjust VCOMH regulator output */
-	CMD_TYPE, 0x30, 										/* VCOM level */
+	CMD_TYPE, CMD_SET_PRE_CHARGE_PERIOD, CMD_TYPE, 0xF1,					/* Set pre-charge period 0xF1 or 0x22 */
+	CMD_TYPE, CMD_SET_V_COMH_DESELECT_LEVEL, CMD_TYPE, 0x30,							/* Adjust VCOMH level regulator output */
 	CMD_TYPE, CMD_RESUME_DISPLAY_TO_GDDRAM, 				/* Enable the display GDDR */
 	CMD_TYPE, CMD_SET_NORMAL_DISPLAY, 						/* Normal display */
 	CMD_TYPE, CMD_SET_MEMORY_ADDRESSING_MODE, CMD_TYPE, 0x00, /* Memory Mode to horizontal addressing mode*/
@@ -299,7 +300,7 @@ void OLED_setRotation(bool leftHanded) {
 
 	// send command struct again with changes
 	if (leftHanded) {
-		OLED_Setup_Array[11] = 0xC8;  // c1?
+		OLED_Setup_Array[11] = 0xC8;
 		OLED_Setup_Array[19] = 0xA1;
 	} else {
 		OLED_Setup_Array[11] = 0xC0;

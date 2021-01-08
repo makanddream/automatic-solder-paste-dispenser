@@ -75,6 +75,26 @@
 #define CMD_SET_V_COMH_DESELECT_LEVEL		0xDB
 
 
+/* Set COM Output Scan Direction (C0h/C8h)
+ * 	This command sets the scan direction of the COM output,
+ * 	allowing layout flexibility in the OLED module design.
+ */
+#define CMD_SET_SCAN_INC	0xC0 // COM Normal
+#define CMD_SET_SCAN_DEC	0xC8 // COM Remapped
+
+/*
+ * Set Pre-charge Period
+ * 	This command is used to set the duration of the pre-charge period.
+ * 	The interval is counted in number of DCLK, where RESET equals 2 DCLKs.
+ */
+#define CMD_SET_PRE_CHARGE_PERIOD	0xD9
+
+/*
+ * Set VCOMH Deselect Level
+ * 	This command adjusts the VCOMH regulator output.
+ */
+#define CMD_SET_V_COMH_DESELECT_LEVEL	0xDB
+
 // Set Display Start Line (40h~7Fh)
 #define CMD_SET_DISPLAY_START_LINE_0	0x40 //RAM row 0 is mapped to COM0
 #define CMD_SET_DISPLAY_START_LINE_1	0x41 //RAM row 1 is mapped to COM0
