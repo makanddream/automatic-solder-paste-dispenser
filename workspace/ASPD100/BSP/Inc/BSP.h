@@ -22,6 +22,7 @@ uint8_t getButtonLeft();
 uint8_t getButtonUp();
 uint8_t getButtonDown();
 uint8_t getButtonCenter();
+uint8_t getButtonAction();
 
 // This is a work around that will be called if I2C starts to bug out
 // This should toggle the SCL line until SDA goes high to end the current transaction

@@ -108,6 +108,11 @@ uint8_t getButtonCenter() {
 			1 : 0;
 }
 
+uint8_t getButtonAction() {
+	return HAL_GPIO_ReadPin(actionButton_GPIO_Port, actionButton_Pin) == GPIO_PIN_RESET ?
+			1 : 0;
+}
+
 void reboot() {
 
 	NVIC_SystemReset();

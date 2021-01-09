@@ -34,6 +34,7 @@ ButtonState getButtonState() {
 	currentState |= (getButtonUp()) << 2;
 	currentState |= (getButtonDown()) << 3;
 	currentState |= (getButtonCenter()) << 4;
+	currentState |= (getButtonAction()) << 5;
 
 	if (currentState)
 		lastButtonTime = xTaskGetTickCount();
@@ -53,6 +54,8 @@ ButtonState getButtonState() {
 				return BUTTON_DOWN_LONG;
 			else if (currentState == 0x10)
 				return BUTTON_CENTER_LONG;
+			else if (currentState == 0x20)
+				return BUTTON_ACTION_LONG;
 			else
 				return BUTTON_NONE; // Both being held case, we dont long hold this
 		} else
@@ -86,8 +89,10 @@ ButtonState getButtonState() {
 					retVal = BUTTON_UP_SHORT;
 				else if (previousState == 0x08)
 					retVal = BUTTON_DOWN_SHORT;
-				else if (previousState == 0x010)
+				else if (previousState == 0x10)
 					retVal = BUTTON_CENTER_SHORT;
+				else if (previousState == 0x20)
+					retVal = BUTTON_ACTION_SHORT;
 				else
 					retVal = BUTTON_NONE;
 			}
