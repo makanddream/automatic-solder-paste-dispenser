@@ -42,7 +42,7 @@ echo "Done !"
 
 
 echo
-read -p "Are you sure to copy the backup freertos file to the new freertos file? " -n 1 -r
+read -p "Are you sure to copy the backup freertos file to the new freertos file [Y/N]? " -n 1 -r
 echo    # (optional) move to a new line
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
