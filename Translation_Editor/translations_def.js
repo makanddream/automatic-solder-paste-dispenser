@@ -158,24 +158,128 @@ var def =
 			"len": 1
 		}
 	],
-	"metricCode": [
-		{
-			"id": "ModeMenu",
-			"maxLen": 11
-		},
-		{
-			"id": "SettingsMenu",
-			"maxLen": 11
-		}
-	],
 	"imperialCode": [
 		{
-			"id": "ModeMenu",
-			"maxLen": 11
+			"id": "01005",
+			"maxLen": 5,
+			"default": "01005"
 		},
 		{
-			"id": "SettingsMenu",
-			"maxLen": 11
+			"id": "0201",
+			"maxLen": 4,
+			"default": "0201"
+		},
+		{
+			"id": "0402",
+			"maxLen": 4,
+			"default": "0402"
+		},
+		{
+			"id": "0603",
+			"maxLen": 4,
+			"default": "0603"
+		},
+		{
+			"id": "0805",
+			"maxLen": 4,
+			"default": "0805"
+		},
+		{
+			"id": "1008",
+			"maxLen": 4,
+			"default": "1008"
+		},
+		{
+			"id": "1206",
+			"maxLen": 4,
+			"default": "1206"
+		},
+		{
+			"id": "1210",
+			"maxLen": 4,
+			"default": "1210"
+		},
+		{
+			"id": "1806",
+			"maxLen": 4,
+			"default": "1806"
+		},
+		{
+			"id": "1812",
+			"maxLen": 4,
+			"default": "1812"
+		},
+		{
+			"id": "2010",
+			"maxLen": 4,
+			"default": "2010"
+		},
+		{
+			"id": "2512",
+			"maxLen": 4,
+			"default": "2512"
+		}
+	],
+	"metricCode": [
+		{
+			"id": "0402",
+			"maxLen": 4,
+			"default": "0402"
+		},
+		{
+			"id": "0603",
+			"maxLen": 4,
+			"default": "0603"
+		},
+		{
+			"id": "1005",
+			"maxLen": 4,
+			"default": "1005"
+		},
+		{
+			"id": "1608",
+			"maxLen": 4,
+			"default": "1608"
+		},
+		{
+			"id": "2012",
+			"maxLen": 4,
+			"default": "2012"
+		},
+		{
+			"id": "2520",
+			"maxLen": 4,
+			"default": "2520"
+		},
+		{
+			"id": "3216",
+			"maxLen": 4,
+			"default": "3216"
+		},
+		{
+			"id": "3225",
+			"maxLen": 4,
+			"default": "3225"
+		},
+		{
+			"id": "4516",
+			"maxLen": 4,
+			"default": "4516"
+		},
+		{
+			"id": "4532",
+			"maxLen": 4,
+			"default": "4532"
+		},
+		{
+			"id": "5025",
+			"maxLen": 4,
+			"default": "5025"
+		},
+		{
+			"id": "6332",
+			"maxLen": 4,
+			"default": "6332"
 		}
 	],
 	"menuRootGroups": [

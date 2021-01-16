@@ -156,8 +156,19 @@ def getLetterCounts(defs, lang):
 
 	#### characters ####
     obj = lang['characters']
-
     for mod in defs['characters']:
+        eid = mod['id']
+        textList.append(obj[eid])
+
+	#### imperialCode ####
+    obj = lang['imperialCode']
+    for mod in defs['imperialCode']:
+        eid = mod['id']
+        textList.append(obj[eid])
+
+	#### metricCode ####
+    obj = lang['metricCode']
+    for mod in defs['metricCode']:
         eid = mod['id']
         textList.append(obj[eid])
 
@@ -416,6 +427,49 @@ def writeLanguage(languageCode, defs, f):
                            convStr(symbolConversionTable, (obj[eid]['text2'][0]) +
                                    "\\n" + obj[eid]['text2'][1]) + "\"," + "//{} \n".format(obj[eid]['text2'])))
    
+    f.write(to_unicode("};\n\n"))
+
+	#### Writing Imperial Code ####
+    obj = lang['imperialCode']
+    f.write(
+        to_unicode("const char* ImperialCode[" + str(len(obj)) +
+                   "] = {\n"))
+
+    maxLen = 5
+    for mod in defs['imperialCode']:
+        eid = mod['id']
+        f.write(to_unicode("  /* " + eid.ljust(maxLen)[:maxLen] + " */ "))
+        if obj[eid] == '':
+            f.write(
+                to_unicode("\"" +
+                           convStr(symbolConversionTable, obj[eid])))
+        else:
+            f.write(
+                to_unicode("\"" +
+                           convStr(symbolConversionTable, (obj[eid])) +
+									"\"," + "//{} \n".format(obj[eid])))
+
+    f.write(to_unicode("};\n\n"))
+
+	#### Writing Metric Code ####
+    obj = lang['metricCode']
+    f.write(
+        to_unicode("const char* MetricCode[" + str(len(obj)) +
+                   "] = {\n"))
+
+    maxLen = 5
+    for mod in defs['metricCode']:
+        eid = mod['id']
+        f.write(to_unicode("  /* " + eid.ljust(maxLen)[:maxLen] + " */ "))
+        if obj[eid] == '':
+            f.write(
+                to_unicode("\"" +
+                           convStr(symbolConversionTable, obj[eid])))
+        else:
+            f.write(
+                to_unicode("\"" +
+                           convStr(symbolConversionTable, (obj[eid])) +
+									"\"," + "//{} \n".format(obj[eid])))
 
     f.write(to_unicode("};\n\n"))
 
