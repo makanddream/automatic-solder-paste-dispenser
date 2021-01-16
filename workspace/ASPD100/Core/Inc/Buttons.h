@@ -8,7 +8,7 @@
 #ifndef INC_BUTTONS_H_
 #define INC_BUTTONS_H_
 
-#include <stdio.h>
+//#include <stdio.h>
 #include "BSP.h"
 
 extern uint32_t lastButtonTime;

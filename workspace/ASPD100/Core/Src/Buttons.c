@@ -10,7 +10,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "gui.h"
-#include "main.h"
+
 uint32_t lastButtonTime = 0;
 
 ButtonState getButtonState() {
@@ -45,9 +45,9 @@ ButtonState getButtonState() {
 			// User has been holding the button down
 			// We want to send a button is held message
 			if (currentState == 0x01)
-				return BUTTON_L_LONG;
-			else if (currentState == 0x02)
 				return BUTTON_R_LONG;
+			else if (currentState == 0x02)
+				return BUTTON_L_LONG;
 			else if (currentState == 0x04)
 				return BUTTON_UP_LONG;
 			else if (currentState == 0x08)
@@ -82,9 +82,9 @@ ButtonState getButtonState() {
 				// So we send button press
 
 				if (previousState == 0x01)
-					retVal = BUTTON_L_SHORT;
-				else if (previousState == 0x02)
 					retVal = BUTTON_R_SHORT;
+				else if (previousState == 0x02)
+					retVal = BUTTON_L_SHORT;
 				else if (previousState == 0x04)
 					retVal = BUTTON_UP_SHORT;
 				else if (previousState == 0x08)
