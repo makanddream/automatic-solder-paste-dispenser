@@ -84,6 +84,7 @@ ASPD100_INTERFACE_JS1400AFQ_PCB/Project Outputs for ASPD100_INTERFACE_JS1400AFQ_
 /ASPD100-hw-cubeMX-config/.mxproject
 /ASPD100-hw-cubeMX-config/.project
 /ASPD100-hw-cubeMX-config/STM32L432KCUX_FLASH.ld
+/ASPD100-hw-cubeMX-config/mx.scratch
 
 #My own research projects/files, no need to be saved !
 /reference/*
