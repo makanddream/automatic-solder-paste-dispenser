@@ -2,12 +2,8 @@
 
 #include <IRQ.h>
 #include "BSP.h"
-//#include "Setup.h"
-//#include "history.hpp"
-//#include "Pins.h"
+
 #include "main.h"
-//#include "history.hpp"
-//#include "Model_Config.h"
 #include "I2C_Wrapper.h"
 
 void resetWatchdog() {
