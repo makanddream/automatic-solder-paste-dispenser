@@ -10,10 +10,10 @@
   * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  * This software component is licensed by ST under Ultimate Liberty license
+  * SLA0044, the "License"; You may not use this file except in compliance with
+  * the License. You may obtain a copy of the License at:
+  *                             www.st.com/SLA0044
   *
   ******************************************************************************
   */
@@ -40,9 +40,9 @@ extern "C" {
 #include "cmsis_os.h"
 #include "dma.h"
 #include "i2c.h"
+#include "tim.h"
 #include "usart.h"
 #include "gpio.h"
-//#include "OLED_SSD1306.h"
 #include "OLED.h"
 /* USER CODE END Includes */
 
@@ -68,19 +68,20 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
 void startGUITask(void *argument);
+void StartMotorTask(void *argument);
+extern TaskHandle_t motorTaskNotification;
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define counterPeriod 100
 #define MCO_Pin GPIO_PIN_0
 #define MCO_GPIO_Port GPIOA
 #define VCP_TX_Pin GPIO_PIN_2
 #define VCP_TX_GPIO_Port GPIOA
 #define upButton_Pin GPIO_PIN_3
 #define upButton_GPIO_Port GPIOA
-#define upButton_EXTI_IRQn EXTI3_IRQn
 #define rightButton_Pin GPIO_PIN_4
 #define rightButton_GPIO_Port GPIOA
-#define rightButton_EXTI_IRQn EXTI4_IRQn
 #define centerButton_Pin GPIO_PIN_5
 #define centerButton_GPIO_Port GPIOA
 #define leftButton_Pin GPIO_PIN_6
@@ -89,6 +90,7 @@ void startGUITask(void *argument);
 #define downButton_GPIO_Port GPIOA
 #define actionButton_Pin GPIO_PIN_0
 #define actionButton_GPIO_Port GPIOB
+#define actionButton_EXTI_IRQn EXTI0_IRQn
 #define I2C1_SCL_Pin GPIO_PIN_9
 #define I2C1_SCL_GPIO_Port GPIOA
 #define I2C1_SDA_Pin GPIO_PIN_10

@@ -26,8 +26,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "gui.h"
-#include "Buttons.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -57,6 +56,13 @@ const osThreadAttr_t GUITask_attributes = {
   .priority = (osPriority_t) osPriorityBelowNormal,
   .stack_size = 1024 * 4
 };
+/* Definitions for MotorTask */
+osThreadId_t MotorTaskHandle;
+const osThreadAttr_t MotorTask_attributes = {
+  .name = "MotorTask",
+  .priority = (osPriority_t) osPriorityRealtime,
+  .stack_size = 512 * 4
+};
 /* Definitions for FRToSI2C_I2CSemaphore */
 osSemaphoreId_t FRToSI2C_I2CSemaphoreHandle;
 osStaticSemaphoreDef_t FRToSI2C_xSemaphoreBuffer;
@@ -72,6 +78,7 @@ const osSemaphoreAttr_t FRToSI2C_I2CSemaphore_attributes = {
 /* USER CODE END FunctionPrototypes */
 
 void StartGUITask(void *argument);
+void StartMotorTask(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -109,233 +116,17 @@ void MX_FREERTOS_Init(void) {
   /* creation of GUITask */
   GUITaskHandle = osThreadNew(StartGUITask, NULL, &GUITask_attributes);
 
+  /* creation of MotorTask */
+  MotorTaskHandle = osThreadNew(StartMotorTask, NULL, &MotorTask_attributes);
+
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
 
-}
+  /* USER CODE BEGIN RTOS_EVENTS */
+  /* add events, ... */
+  /* USER CODE END RTOS_EVENTS */
 
-void GUIDelay() {
-	// Called in all UI looping tasks,
-	// This limits the re-draw rate to the LCD and also lets the DMA run
-	// As the gui task can very easily fill this bus with transactions, which will
-	// prevent the movement detection from running
-	osDelay(50);
-}
-
-static void gui_automaticSolderPasteDispenserMode(void) {
-	/*
-	 * * Automatic Solder Paste Dispenser (gui_automaticSolderPasteDispenserMode)
-	 * -> Main loop where we draw the footprint size, and animations
-	 * --> User presses buttons and they goto the temperature adjust screen
-	 * ---> Display the current setpoint temperature
-	 * ---> Use buttons to change forward and back on temperature
-	 * ---> Both buttons or timeout for exiting
-	 * --> Long hold front button to enter boost mode
-	 * ---> Just temporarily sets the system into the alternate temperature for
-	 * PID control
-	 * --> Long hold back button to exit
-	 * --> Double button to exit
-	 */
-	for (;;) {
-		OLED_setFont(0);
-		OLED_setCursor(0, 0);
-		OLED_clearScreen();
-		OLED_print(Mode1);
-
-		ButtonState buttons = getButtonState();
-
-		switch (buttons) {
-			case BUTTON_NONE:
-				// stay
-				break;
-			case BUTTON_R_LONG:
-				break;
-			case BUTTON_L_LONG:
-				break;
-			case BUTTON_UP_LONG:
-				break;
-			case BUTTON_DOWN_LONG:
-				break;
-			case BUTTON_CENTER_LONG:
-				// Exit this menu
-				return;
-				break;
-			case BUTTON_R_SHORT:
-				break;
-			case BUTTON_L_SHORT:
-				break;
-			case BUTTON_UP_SHORT:
-				break;
-			case BUTTON_DOWN_SHORT:
-				break;
-			case BUTTON_CENTER_SHORT:
-
-				break;
-			default:
-				break;
-		}
-
-		OLED_refresh();
-
-		// slow down ui update rate
-		GUIDelay();
-	}
-}
-
-static void gui_vacuumPickUpMode(void) {
-	/*
-	 * * Vacuum Pick-Up (gui_vacuumPickUpMode)
-	 * -> Main loop where we draw the footprint size, and animations
-	 * --> User presses buttons and they goto the temperature adjust screen
-	 * ---> Display the current setpoint temperature
-	 * ---> Use buttons to change forward and back on temperature
-	 * ---> Both buttons or timeout for exiting
-	 * --> Long hold front button to enter boost mode
-	 * ---> Just temporarily sets the system into the alternate temperature for
-	 * PID control
-	 * --> Long hold back button to exit
-	 * --> Double button to exit
-	 */
-	for (;;) {
-		OLED_setFont(0);
-		OLED_setCursor(0, 0);
-		OLED_clearScreen();
-		OLED_print(Mode2);
-
-		ButtonState buttons = getButtonState();
-
-		switch (buttons) {
-			case BUTTON_NONE:
-				// stay
-				break;
-			case BUTTON_R_LONG:
-				break;
-			case BUTTON_L_LONG:
-				break;
-			case BUTTON_UP_LONG:
-				break;
-			case BUTTON_DOWN_LONG:
-				break;
-			case BUTTON_CENTER_LONG:
-				// Exit this menu
-				return;
-				break;
-			case BUTTON_R_SHORT:
-				break;
-			case BUTTON_L_SHORT:
-				break;
-			case BUTTON_UP_SHORT:
-				break;
-			case BUTTON_DOWN_SHORT:
-				break;
-			case BUTTON_CENTER_SHORT:
-				break;
-			default:
-				break;
-		}
-
-		OLED_refresh();
-
-		// slow down ui update rate
-		GUIDelay();
-	}
-}
-
-/* USER CODE BEGIN Header_StartGUITask */
-/**
-  * @brief  Function implementing the GUITask thread.
-  * @param  argument: Not used
-  * @retval None
-  */
-/* USER CODE END Header_StartGUITask */
-void StartGUITask(void *argument)
-{
-  /* USER CODE BEGIN StartGUITask */
-  /* Infinite loop */
-	OLED_initialize();  // start up the OLED screen
-
-	bool buttonLockout = false;
-	bool alreadyStarted = false;
-
-	for (;;) {
-#if 1
-		if(systemSettings.isFirstStart || alreadyStarted){
-			enterRootMenu();  // enter the settings menu
-			buttonLockout = true;
-		}else{
-			alreadyStarted = true;
-			if(systemSettings.modeType == 1){
-				// Mode = Automatic Solder Paste Dispenser
-				gui_automaticSolderPasteDispenserMode();
-			}else if(systemSettings.modeType == 2){
-				// Mode = Vacuum Pick-Up
-				gui_vacuumPickUpMode();
-			}
-		}
-#elif 0
-		enterRootMenu();  // enter the settings menu
-		buttonLockout = true;
-#elif 0
-		OLED_fullScreen();
-		OLED_refresh();
-		osDelay(1000);
-		OLED_clearScreen();
-		OLED_refresh();
-		osDelay(1000);
-#elif 0
-		OLED_setFont(0);
-		OLED_setCursor(0, 0);
-		OLED_print("\x1D\x16\x15\x0C");
-#else
-		ButtonState buttons = getButtonState();
-		if (buttons != BUTTON_NONE) {
-			OLED_setDisplayState(ON);
-			OLED_setFont(0);
-		}
-
-		if (buttons != BUTTON_NONE && buttonLockout)
-			buttons = BUTTON_NONE;
-		else
-			buttonLockout = false;
-
-		switch (buttons) {
-			case BUTTON_NONE:
-				// Do nothing
-				break;
-			case BUTTON_BOTH:
-				// Not used yet
-				// In multi-language this might be used to reset language on a long hold
-				// or some such
-				printf("BUTTON_BOTH\r\n");
-				break;
-
-			case BUTTON_L_LONG:
-				printf("BUTTON_L_LONG\r\n");
-
-				break;
-			case BUTTON_R_LONG:
-				printf("BUTTON_R_LONG\r\n");
-
-				break;
-			case BUTTON_L_SHORT:
-				printf("BUTTON_L_SHORT\r\n");
-
-				break;
-			case BUTTON_R_SHORT:
-				printf("BUTTON_R_SHORT\r\n");
-				enterRootMenu();  // enter the settings menu
-				buttonLockout = true;
-				break;
-			default:
-				break;
-		}
-#endif
-
-		OLED_refresh();
-		GUIDelay();
-	}
-  /* USER CODE END StartGUITask */
 }
 
 /* Private application code --------------------------------------------------*/
