@@ -103,7 +103,6 @@ typedef struct {
 	uint8_t fontWidth, fontHeight;
 	int16_t cursor_x, cursor_y;
 	uint8_t displayOffset;
-	//uint8_t screenBuffer[16 + (OLED_WIDTH * 2) + 10];  // The data buffer
 	uint8_t screenBuffer[OLED_WIDTH * OLED_HEIGHT / 8 + 30];  // The data buffer
 	uint8_t secondFrameBuffer[OLED_WIDTH * OLED_HEIGHT / 8 + 30];
 } OLED_t;
