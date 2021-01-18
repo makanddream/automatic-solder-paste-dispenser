@@ -15,7 +15,7 @@ extern "C" {
 // Called to reset the hardware watchdog unit
 void resetWatchdog();
 
-// Readers for the two buttons
+// Readers for the buttons
 // !! Returns 1 if held down, 0 if released
 uint8_t getButtonRight();
 uint8_t getButtonLeft();
