@@ -27,6 +27,8 @@ typedef struct {
 	void (* const draw)(void);
 } menuitem;
 
+uint8_t counterFootprint;
+
 void enterRootMenu();
 void GUIDelay();
 extern const menuitem rootMenu[];

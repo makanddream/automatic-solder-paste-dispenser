@@ -115,6 +115,8 @@ int main(void)
   MX_I2C1_Init();
   MX_TIM1_Init();
   MX_TIM7_Init();
+  MX_TIM15_Init();
+  MX_TIM16_Init();
   /* USER CODE BEGIN 2 */
   settingsWereReset = restoreSettings();  // load the settings from flash
 

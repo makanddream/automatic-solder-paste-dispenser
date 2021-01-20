@@ -36,7 +36,7 @@ static void gui_automaticSolderPasteDispenserMode(void) {
 	 * --> Long hold back button to exit
 	 * --> Double button to exit
 	 */
-	uint8_t counterFootprint = 0;
+	counterFootprint = 0;
 	uint8_t metricCodeTabSize = sizeof(MetricCode) / sizeof(MetricCode[0]);
 
 	FootPrint footPrints[metricCodeTabSize];
