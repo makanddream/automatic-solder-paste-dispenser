@@ -52,11 +52,12 @@ static void gui_automaticSolderPasteDispenserMode(void) {
 		OLED_setFont(0);
 		OLED_setCursor(32, 8);
 		OLED_clearScreen();
-		if(counterFootprint < metricCodeTabSize){
-			OLED_print(footPrints[counterFootprint].footprintName);
-		}else{
+
+		if(counterFootprint >= metricCodeTabSize){
 			counterFootprint = 0;
 		}
+
+		OLED_print(footPrints[counterFootprint].footprintName);
 
 		ButtonState buttons = getButtonState();
 
