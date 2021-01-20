@@ -52,6 +52,7 @@ I want something in between these two methods for these reasons:
 
 * STM32CubeIDE 1.4.0
 * Python 3.0 for building the translation module
+* WinMerge for the script : "script-copy-new-generate-files-project.bat"
 
 ## Hardware
 
