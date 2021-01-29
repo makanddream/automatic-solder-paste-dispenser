@@ -116,6 +116,16 @@ var def =
 			"default": "SLOW"
 		},
 		{
+			"id": "UPString",
+			"maxLen": 5,
+			"default": "UP"
+		},
+		{
+			"id": "DOWNString",
+			"maxLen": 5,
+			"default": "DOWN"
+		},
+		{
 			"id": "UserConfirmation",
 			"maxLen": 8
 		}		

@@ -27,6 +27,8 @@
 		"SettingsResetMessage": "Settings were\nreset!",
 		"Mode1": "Automatic Solder Paste Dispenser",
 		"Mode2": "Vacuum Pick-Up",
+		"UPString": "UP",
+		"DOWNString": "DOWN",
 		"UserConfirmation": "User Confirmation"
 	},
 	"characters": {
