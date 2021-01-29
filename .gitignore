@@ -92,4 +92,14 @@ DRV8876/*
 workspace/DRV8876-control/*
 /workspace/stm32L432-ssd1306/*
 /workspace/save-data-on-flash/*
+/workspace/STUSB4500_CONTROLLER/*
+/workspace/STUSB4500_CONTROLLER_V2/*
 /docs/datasheet/*
+/PowerManagement/*
+/ASPD100_PCB_1_MCU_OLED/*
+/ASPD100_PCB_2_POWER_MANAGEMENT/*
+/ASPD100_PCB_3_MOTOR_CONTROL/*
+/ASPD100_INTERFACE_JS1400AFQ_PCB_V2/*
+/docs/PCB_MECHANICAL.RUL
+/docs/en.EVAL-SCS001V1_BOM.xls
+/docs/aspd100-3d-model/*
