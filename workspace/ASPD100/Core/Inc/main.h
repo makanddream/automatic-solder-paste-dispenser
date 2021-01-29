@@ -74,6 +74,7 @@ extern TaskHandle_t motorTaskNotification;
 
 /* Private defines -----------------------------------------------------------*/
 #define counterPeriod 100
+#define counterPeriod2 50
 #define MCO_Pin GPIO_PIN_0
 #define MCO_GPIO_Port GPIOA
 #define VCP_TX_Pin GPIO_PIN_2
@@ -91,10 +92,18 @@ extern TaskHandle_t motorTaskNotification;
 #define actionButton_Pin GPIO_PIN_0
 #define actionButton_GPIO_Port GPIOB
 #define actionButton_EXTI_IRQn EXTI0_IRQn
+#define PH_IN2_Pin GPIO_PIN_1
+#define PH_IN2_GPIO_Port GPIOB
+#define EN_IN1_Pin GPIO_PIN_8
+#define EN_IN1_GPIO_Port GPIOA
 #define I2C1_SCL_Pin GPIO_PIN_9
 #define I2C1_SCL_GPIO_Port GPIOA
 #define I2C1_SDA_Pin GPIO_PIN_10
 #define I2C1_SDA_GPIO_Port GPIOA
+#define nSLEEP_Pin GPIO_PIN_11
+#define nSLEEP_GPIO_Port GPIOA
+#define nFAULT_Pin GPIO_PIN_12
+#define nFAULT_GPIO_Port GPIOA
 #define SWDIO_Pin GPIO_PIN_13
 #define SWDIO_GPIO_Port GPIOA
 #define SWCLK_Pin GPIO_PIN_14

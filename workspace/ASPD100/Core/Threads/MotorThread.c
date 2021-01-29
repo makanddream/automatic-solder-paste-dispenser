@@ -9,6 +9,7 @@
 
 #include "gui.h"
 #include "Buttons.h"
+#include "DRV8876.h"
 
 TaskHandle_t motorTaskNotification = NULL;
 
@@ -29,6 +30,8 @@ void StartMotorTask(void *argument)
 	for(;;)
 	{
 		if (ulTaskNotifyTake(pdTRUE, xBlockTime)) {
+			drv8876_driver_wakeup();
+			drv8876_speed_control(80);
 			HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
 			HAL_TIM_Base_Start_IT(&htim7);
 			__HAL_TIM_CLEAR_FLAG(&htim7, TIM_SR_UIF);

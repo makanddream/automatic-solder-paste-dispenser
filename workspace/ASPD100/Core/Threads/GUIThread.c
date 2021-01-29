@@ -12,6 +12,8 @@
 typedef struct FootPrint_t{
 	const char* footprintName;
 	uint16_t timeMs; // Motor activation time
+	uint16_t length;
+	uint16_t large;
 }FootPrint;
 
 void GUIDelay() {
@@ -19,6 +21,46 @@ void GUIDelay() {
 	// This limits the re-draw rate to the LCD and also lets the DMA run
 	// As the gui task can very easily fill this bus with transactions, which will
 	// prevent the movement detection from running
+	osDelay(50);
+}
+
+typedef enum ArrowState_t {
+	ARROW_UP, /* TODO */
+	ARROW_DOWN, /* TODO */
+	ARROW_EMPTY, /* TODO */
+}ArrowState;
+
+ButtonState buttonsSave;
+
+static void displayArrow(int16_t x){
+	if(buttonsSave == BUTTON_UP_SHORT){
+		OLED_drawArea(x, 0, 12, 16, (&arrow[(12 * 2) * 2])); // Arrow UP full
+		OLED_drawArea(x, 24, 12, 16, (&arrow[(12 * 2) * 1])); // Arrow DOWN empty
+	}else if(buttonsSave == BUTTON_DOWN_SHORT){
+		OLED_drawArea(x, 0, 12, 16, (&arrow[(12 * 2) * 0])); // Arrow UP empty
+		OLED_drawArea(x, 24, 12, 16, (&arrow[(12 * 2) * 3])); // Arrow DOWN full
+	}else if(buttonsSave == BUTTON_NONE){
+		OLED_drawArea(x, 0, 12, 16, (&arrow[(12 * 2) * 0])); // Arrow UP empty
+		OLED_drawArea(x, 24, 12, 16, (&arrow[(12 * 2) * 1])); // Arrow DOWN empty
+	}else{
+		// Nothing
+	}
+	osDelay(50);
+}
+
+static void displayArrowState(ArrowState arrowState, int16_t x){
+	if(arrowState == ARROW_UP){
+		OLED_drawArea(x, 0, 12, 16, (&arrow[(12 * 2) * 2])); // Arrow UP full
+		OLED_drawArea(x, 24, 12, 16, (&arrow[(12 * 2) * 1])); // Arrow DOWN empty
+	}else if(arrowState == ARROW_DOWN){
+		OLED_drawArea(x, 0, 12, 16, (&arrow[(12 * 2) * 0])); // Arrow UP empty
+		OLED_drawArea(x, 24, 12, 16, (&arrow[(12 * 2) * 3])); // Arrow DOWN full
+	}else if(arrowState == ARROW_EMPTY){
+		OLED_drawArea(x, 0, 12, 16, (&arrow[(12 * 2) * 0])); // Arrow UP empty
+		OLED_drawArea(x, 24, 12, 16, (&arrow[(12 * 2) * 1])); // Arrow DOWN empty
+	}else{
+		// Nothing
+	}
 	osDelay(50);
 }
 
@@ -37,20 +79,23 @@ static void gui_automaticSolderPasteDispenserMode(void) {
 	 * --> Double button to exit
 	 */
 	counterFootprint = 0;
+	bool isUP = false;
 	uint8_t metricCodeTabSize = sizeof(MetricCode) / sizeof(MetricCode[0]);
 
 	FootPrint footPrints[metricCodeTabSize];
 
 	for(uint8_t i = 0; i < metricCodeTabSize; i++){
 		footPrints[i].footprintName = MetricCode[i];
-		footPrints[i].timeMs = (250 * (i+1));
+		footPrints[i].timeMs = (50 * (i+1));
+		footPrints[i].length = (5 * (i+1));
+		footPrints[i].large = (2 * (i+1));
 	}
 
-	__HAL_TIM_SET_AUTORELOAD(&htim7, footPrints[0].timeMs - 1);
+	__HAL_TIM_SET_AUTORELOAD(&htim7, footPrints[0].timeMs - 1); //Init timer period with the first value (0402)
 
 	for (;;) {
 		OLED_setFont(0);
-		OLED_setCursor(32, 8);
+		OLED_setCursor(10, 8);
 		OLED_clearScreen();
 
 		if(counterFootprint >= metricCodeTabSize){
@@ -60,10 +105,11 @@ static void gui_automaticSolderPasteDispenserMode(void) {
 		OLED_print(footPrints[counterFootprint].footprintName);
 
 		ButtonState buttons = getButtonState();
+		buttonsSave = buttons;
 
 		switch (buttons) {
 			case BUTTON_NONE:
-				// stay
+				//displayArrowState(ARROW_EMPTY, 88);
 				break;
 			case BUTTON_R_LONG:
 				break;
@@ -92,14 +138,30 @@ static void gui_automaticSolderPasteDispenserMode(void) {
 				}
 				break;
 			case BUTTON_UP_SHORT:
+				isUP = true;
+				displayArrowState(ARROW_UP, 88);
 				break;
 			case BUTTON_DOWN_SHORT:
+				isUP = false;
+				displayArrowState(ARROW_DOWN, 88);
 				break;
 			case BUTTON_CENTER_SHORT:
 
 				break;
 			default:
 				break;
+		}
+
+		displayArrowState(ARROW_EMPTY, 88);
+
+		if(isUP){
+			OLED_setCursor(70, 8);
+			OLED_print(UPString);
+			drv8876_direction_control(true);
+		}else{
+			OLED_setCursor(70, 8);
+			OLED_print(DOWNString);
+			drv8876_direction_control(false);
 		}
 
 		__HAL_TIM_SET_AUTORELOAD(&htim7, footPrints[counterFootprint].timeMs - 1);
