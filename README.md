@@ -69,8 +69,8 @@ This project is tested by my own test bench powered by jenkins.
 
 The product will be available soon on the https://www.tindie.com/ platform.
 
-Licence
+## Licence
 The code created by the community is GNU GPLv3. Unless noted elsewhere. Other components such as FreeRTOS/USB-PD have their own licence.
 
-Commercial Use
+## Commercial Use
 This software is provided as-is, so I cannot provide any commercial support for the firmware. However, you are more than welcome to distribute links to the firmware, or provide irons with this software on them. Please do not re-host the files, but rather link to this page, so that there are no old versions of the firmware scattered around.
