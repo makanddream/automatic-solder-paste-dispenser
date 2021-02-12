@@ -43,6 +43,8 @@ extern "C" {
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
+#include "adc.h"
+
 #include "OLED.h"
 /* USER CODE END Includes */
 
@@ -77,6 +79,8 @@ extern TaskHandle_t motorTaskNotification;
 #define counterPeriod2 50
 #define MCO_Pin GPIO_PIN_0
 #define MCO_GPIO_Port GPIOA
+#define IPROPI_Pin GPIO_PIN_1
+#define IPROPI_GPIO_Port GPIOA
 #define VCP_TX_Pin GPIO_PIN_2
 #define VCP_TX_GPIO_Port GPIOA
 #define upButton_Pin GPIO_PIN_3
