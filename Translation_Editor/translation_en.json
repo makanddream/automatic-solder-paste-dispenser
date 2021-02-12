@@ -7,6 +7,7 @@
 		"SettingsCalibrationDone": "Calibration done!",
 		"SettingsCalibrationWarning": "Please ensure the tip is at room temperature, before continuing!",
 		"SettingsResetWarning": "Are you sure you want to reset settings to default values?",
+		"RefuelProcedureWarning": "Do you want start the refuel solder paste procedure ?",
 		"UVLOWarningString": "DC LOW",
 		"UndervoltageString": "Undervoltage",
 		"InputVoltageString": "Input V: ",
@@ -94,12 +95,19 @@
 			],
 			"desc": "Automatic Solder Paste Dispenser mode"
 		},
-		"VacuumPickUp": {
+		"RefuelProcedure": {
 			"text2": [
-				"Vacuum Pick-Up",
-				""
+				"Refuel Solder",
+				"Paste Procedure"
 			],
-			"desc": "Vacuum Pick-Up mode"
+			"desc": "Refuel solder paste procedure"
+		},
+		"ChangeSyringeProcedure": {
+			"text2": [
+				"Change or Replace",
+				"Syringe"
+			],
+			"desc": "Procedure for changing or replacing the syringe"
 		},
 		"Contrast": {
 			"text2": [

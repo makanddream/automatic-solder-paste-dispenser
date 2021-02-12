@@ -11,6 +11,9 @@ var def =
 			"id": "SettingsResetWarning"
 		},
 		{
+			"id": "RefuelProcedureWarning"
+		},
+		{
 			"id": "UVLOWarningString",
 			"maxLen": 8
 		},
@@ -309,7 +312,12 @@ var def =
 			"maxLen2": 30
 		},
 		{
-			"id": "VacuumPickUp",
+			"id": "RefuelProcedure",
+			"maxLen": 10,
+			"maxLen2": 20
+		},
+		{
+			"id": "ChangeSyringeProcedure",
 			"maxLen": 10,
 			"maxLen2": 20
 		},
