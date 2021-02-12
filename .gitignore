@@ -55,11 +55,14 @@ dkms.conf
 *.bak
 
 #For the Alitum projects just save on repo the fabrication files
-ASPD100_INTERFACE_JS1300AQ_PCB/*
 
-ASPD100_INTERFACE_JS1400AFQ_PCB/*
-!ASPD100_INTERFACE_JS1400AFQ_PCB/Project Outputs for ASPD100_INTERFACE_JS1400AFQ_PCB/
-ASPD100_INTERFACE_JS1400AFQ_PCB/Project Outputs for ASPD100_INTERFACE_JS1400AFQ_PCB/Source/*
+#Temporary removed this directory
+PCB_Design/*
+
+PCB_Design/*/*
+!PCB_Design/*/*/
+PCB_Design/*/*/*
+!PCB_Design/*/*/Fabrication
 
 # Others
 *.launch
@@ -96,10 +99,6 @@ workspace/DRV8876-control/*
 /workspace/STUSB4500_CONTROLLER_V2/*
 /docs/datasheet/*
 /PowerManagement/*
-/ASPD100_PCB_1_MCU_OLED/*
-/ASPD100_PCB_2_POWER_MANAGEMENT/*
-/ASPD100_PCB_3_MOTOR_CONTROL/*
-/ASPD100_INTERFACE_JS1400AFQ_PCB_V2/*
 /docs/PCB_MECHANICAL.RUL
 /docs/en.EVAL-SCS001V1_BOM.xls
 /docs/aspd100-3d-model/*
