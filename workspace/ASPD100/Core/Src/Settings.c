@@ -17,8 +17,10 @@
 volatile systemSettingsType systemSettings;
 
 void saveSettings() {
+#ifdef SAVE_SETTINGS
 	// First we erase the flash
 	flash_save_buffer((uint8_t*) &systemSettings, sizeof(systemSettingsType));
+#endif
 }
 
 bool restoreSettings() {

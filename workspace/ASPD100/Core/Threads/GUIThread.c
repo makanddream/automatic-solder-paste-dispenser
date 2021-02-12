@@ -9,12 +9,9 @@
 #include "gui.h"
 #include "Buttons.h"
 
-typedef struct FootPrint_t{
-	const char* footprintName;
-	uint16_t timeMs; // Motor activation time
-	uint16_t length;
-	uint16_t large;
-}FootPrint;
+#include "DRV8876.h"
+
+#include "configuration.h"
 
 void GUIDelay() {
 	// Called in all UI looping tasks,
@@ -80,25 +77,37 @@ static void gui_automaticSolderPasteDispenserMode(void) {
 	 */
 	counterFootprint = 0;
 	bool isUP = false;
-	uint8_t metricCodeTabSize = sizeof(MetricCode) / sizeof(MetricCode[0]);
 
-	FootPrint footPrints[metricCodeTabSize];
+	uint16_t pushTime[12] = {1000, PUSH_TIME_0201, PUSH_TIME_0402, PUSH_TIME_0603, PUSH_TIME_0805, 0, 0, 0, 0, 0, 0, 0};
+	uint16_t retractTime[12] = {10, RETRACT_TIME_0201, RETRACT_TIME_0402, RETRACT_TIME_0603, RETRACT_TIME_0805, 0, 0, 0, 0, 0, 0, 0};
 
-	for(uint8_t i = 0; i < metricCodeTabSize; i++){
+	uint8_t footprintsCodeTabSize = sizeof(ImperialCode) / sizeof(ImperialCode[0]);
+
+	//footPrints[footprintsCodeTabSize];
+
+	for(uint8_t i = 0; i < footprintsCodeTabSize; i++){
+#ifdef IMPERIAL
+		footPrints[i].footprintName = ImperialCode[i];
+#endif
+
+#ifdef METRIC
 		footPrints[i].footprintName = MetricCode[i];
-		footPrints[i].timeMs = (50 * (i+1));
-		footPrints[i].length = (5 * (i+1));
-		footPrints[i].large = (2 * (i+1));
+#endif
+
+		footPrints[i].pushTime = pushTime[i];
+		footPrints[i].retractTime = retractTime[i];
 	}
 
-	__HAL_TIM_SET_AUTORELOAD(&htim7, footPrints[0].timeMs - 1); //Init timer period with the first value (0402)
+	counterFootprint = 3; //Just for test
+
+	__HAL_TIM_SET_AUTORELOAD(&htim7, footPrints[counterFootprint].pushTime - 1); //Init timer period with the first value (0402)
 
 	for (;;) {
 		OLED_setFont(0);
-		OLED_setCursor(10, 8);
+		OLED_setCursor(0, 8);
 		OLED_clearScreen();
 
-		if(counterFootprint >= metricCodeTabSize){
+		if(counterFootprint >= footprintsCodeTabSize){
 			counterFootprint = 0;
 		}
 
@@ -124,26 +133,36 @@ static void gui_automaticSolderPasteDispenserMode(void) {
 				return;
 				break;
 			case BUTTON_R_SHORT:
-				if(counterFootprint == metricCodeTabSize - 1){
+				if(counterFootprint == footprintsCodeTabSize - 1){
 					counterFootprint = 0;
 				}else{
 					counterFootprint++;
 				}
+				__HAL_TIM_SET_AUTORELOAD(&htim7, footPrints[counterFootprint].pushTime - 1);
 				break;
 			case BUTTON_L_SHORT:
 				if(counterFootprint == 0){
-					counterFootprint = metricCodeTabSize - 1;
+					counterFootprint = footprintsCodeTabSize - 1;
 				}else{
 					counterFootprint--;
 				}
+				__HAL_TIM_SET_AUTORELOAD(&htim7, footPrints[counterFootprint].pushTime - 1);
 				break;
 			case BUTTON_UP_SHORT:
 				isUP = true;
 				displayArrowState(ARROW_UP, 88);
+				drv8876_direction_control(false);
 				break;
 			case BUTTON_DOWN_SHORT:
 				isUP = false;
 				displayArrowState(ARROW_DOWN, 88);
+				drv8876_direction_control(true);
+				BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+				if (motorTaskNotification) {
+					vTaskNotifyGiveFromISR(motorTaskNotification,
+							&xHigherPriorityTaskWoken);
+					portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+				}
 				break;
 			case BUTTON_CENTER_SHORT:
 
@@ -157,18 +176,14 @@ static void gui_automaticSolderPasteDispenserMode(void) {
 		if(isUP){
 			OLED_setCursor(70, 8);
 			OLED_print(UPString);
-			drv8876_direction_control(true);
 		}else{
 			OLED_setCursor(70, 8);
 			OLED_print(DOWNString);
-			drv8876_direction_control(false);
 		}
-
-		__HAL_TIM_SET_AUTORELOAD(&htim7, footPrints[counterFootprint].timeMs - 1);
 
 		OLED_refresh();
 
-		// slow down ui update rate
+		// Slow down ui update rate
 		GUIDelay();
 	}
 }
@@ -186,79 +201,19 @@ void StartGUITask(void *argument)
   /* Infinite loop */
 	OLED_initialize();  // start up the OLED screen
 
-	bool buttonLockout = false;
-	bool alreadyStarted = false;
+	bool startRootMenu = true;
 
 	for (;;) {
-#if 1
-		if(systemSettings.isFirstStart || alreadyStarted){
+		if(startRootMenu){
 			enterRootMenu();  // enter the settings menu
-			buttonLockout = true;
 		}else{
-			alreadyStarted = true;
 			gui_automaticSolderPasteDispenserMode();
 		}
-#elif 0
-		enterRootMenu();  // enter the settings menu
-		buttonLockout = true;
-#elif 0
-		OLED_fullScreen();
-		OLED_refresh();
-		osDelay(1000);
-		OLED_clearScreen();
-		OLED_refresh();
-		osDelay(1000);
-#elif 0
-		OLED_setFont(0);
-		OLED_setCursor(0, 0);
-		OLED_print("\x1D\x16\x15\x0C");
-#else
-		ButtonState buttons = getButtonState();
-		if (buttons != BUTTON_NONE) {
-			OLED_setDisplayState(ON);
-			OLED_setFont(0);
-		}
 
-		if (buttons != BUTTON_NONE && buttonLockout)
-			buttons = BUTTON_NONE;
-		else
-			buttonLockout = false;
-
-		switch (buttons) {
-			case BUTTON_NONE:
-				// Do nothing
-				break;
-			case BUTTON_BOTH:
-				// Not used yet
-				// In multi-language this might be used to reset language on a long hold
-				// or some such
-				printf("BUTTON_BOTH\r\n");
-				break;
-
-			case BUTTON_L_LONG:
-				printf("BUTTON_L_LONG\r\n");
-
-				break;
-			case BUTTON_R_LONG:
-				printf("BUTTON_R_LONG\r\n");
-
-				break;
-			case BUTTON_L_SHORT:
-				printf("BUTTON_L_SHORT\r\n");
-
-				break;
-			case BUTTON_R_SHORT:
-				printf("BUTTON_R_SHORT\r\n");
-				enterRootMenu();  // enter the settings menu
-				buttonLockout = true;
-				break;
-			default:
-				break;
-		}
-#endif
+		startRootMenu = !startRootMenu;
 
 		OLED_refresh();
-		GUIDelay();
+		osDelay(200);
 	}
   /* USER CODE END StartGUITask */
 }

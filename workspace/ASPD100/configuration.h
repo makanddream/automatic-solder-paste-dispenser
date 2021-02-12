@@ -40,3 +40,18 @@
  * Default configuration for the vacuum pick-up mode
  */
 #define FIRST_START          1        // Default constrast value is 50%
+
+/*
+ * Footprints configuration
+ */
+#define PUSH_TIME_0201		500
+#define RETRACT_TIME_0201	490
+
+#define PUSH_TIME_0402		600
+#define RETRACT_TIME_0402	590
+
+#define PUSH_TIME_0603		800
+#define RETRACT_TIME_0603	790
+
+#define PUSH_TIME_0805		900
+#define RETRACT_TIME_0805	890

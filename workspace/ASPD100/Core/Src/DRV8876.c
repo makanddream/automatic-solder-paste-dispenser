@@ -57,6 +57,10 @@ void drv8876_speed_control(uint8_t speed){
  */
 
 void drv8876_direction_control(bool isClockwise){
+
+	//True = UP
+	//False = DOWN
+
 	if(isClockwise){
 		HAL_GPIO_WritePin(PH_IN2_GPIO_Port, PH_IN2_Pin, GPIO_PIN_SET);
 	}else{

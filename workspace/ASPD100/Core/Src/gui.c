@@ -14,6 +14,7 @@
 #include "../../configuration.h"
 #include "Buttons.h"
 
+#include "DRV8876.h"
 
 void gui_Menu(const menuitem *menu);
 
@@ -24,10 +25,12 @@ static void displaySettingsMenu(void);
 static bool enterSettingsMenu(void);
 
 /* Functions of the mode menu options */
-static bool settings_setAutomaticSolderPasteDispenser(void);
-static void settings_displayAutomaticSolderPasteDispenser(void);
-static bool settings_setVacuumPickUp(void);
-static void settings_displayVacuumPickUp(void);
+static bool settings_setAutomaticFootprints(void);
+static void settings_displayAutomaticFootprints(void);
+static bool settings_setRefuelSolderPaste(void);
+static void settings_displayRefuelSolderPaste(void);
+static bool settings_setChangeSyringe(void);
+static void settings_displayChangeSyringe(void);
 
 /* Functions of the settings menu options */
 static bool settings_setContrast(bool isInc);
@@ -69,17 +72,18 @@ const menuitem rootMenu[] = {
 	{ (const char*) NULL, enterModeMenu, NULL, displayModeMenu }, /*Mode Menu*/
 	{ (const char*) NULL, enterSettingsMenu, NULL, displaySettingsMenu }, /*Settings Menu*/
 
-	{ NULL, NULL, NULL }	// end of menu marker. DO NOT REMOVE
+	{ NULL, NULL, NULL, NULL }	// end of menu marker. DO NOT REMOVE
 };
 
 //const char *tests = test;
 
 menuitem ModeMenu[] = {
 
-	{ (const char*) SettingsDescriptions[0], settings_setAutomaticSolderPasteDispenser, NULL, settings_displayAutomaticSolderPasteDispenser }, /* Automatic solder paste dispenser mode */
-	{ (const char*) SettingsDescriptions[1], settings_setVacuumPickUp, NULL, settings_displayVacuumPickUp }, /* Vacuum pick-up mode */
+	{ (const char*) SettingsDescriptions[0], settings_setAutomaticFootprints, NULL, settings_displayAutomaticFootprints }, /* Automatic solder paste dispenser mode */
+	{ (const char*) SettingsDescriptions[1], settings_setRefuelSolderPaste, NULL, settings_displayRefuelSolderPaste }, /* Vacuum pick-up mode */
+	{ (const char*) SettingsDescriptions[2], settings_setChangeSyringe, NULL, settings_displayChangeSyringe }, /* Change syringe */
 
-	{ NULL, NULL, NULL }	// end of menu marker. DO NOT REMOVE
+	{ NULL, NULL, NULL, NULL }	// end of menu marker. DO NOT REMOVE
 };
 
 const menuitem SettingsMenu[] = {
@@ -92,7 +96,7 @@ const menuitem SettingsMenu[] = {
 	{ (const char*) SettingsDescriptions[3], NULL, settings_setScrollSpeed, settings_displayScrollSpeed }, /* Scroll Speed for descriptions */
 	{ (const char*) SettingsDescriptions[4], NULL, settings_setResetSettings, settings_displayResetSettings }, /* Resets settings */
 
-	{ NULL, NULL, NULL }	// end of menu marker. DO NOT REMOVE
+	{ NULL, NULL, NULL, NULL }	// end of menu marker. DO NOT REMOVE
 };
 
 static void printShortDescriptionDoubleLine(uint32_t shortDescIndex) {
@@ -201,22 +205,103 @@ static void displayArrow(int16_t x){
 }
 
 /* Functions of the mode menu options */
-static bool settings_setAutomaticSolderPasteDispenser(void) {
+static bool settings_setAutomaticFootprints(void) {
 	return true;
 }
 
-static void settings_displayAutomaticSolderPasteDispenser(void) {
-	systemSettings.modeType = 1;
-	printShortDescription(0, 0);
+static void settings_displayAutomaticFootprints(void) {
+	printShortDescription(0, 0);}
+
+static bool settings_setRefuelSolderPaste(void) {
+
+	bool earlyExit = false;
+	bool isFirstCounter = true;
+	uint8_t counter = 0;
+
+	HAL_NVIC_DisableIRQ(EXTI0_IRQn);
+	drv8876_driver_wakeup();
+	drv8876_speed_control(100);
+	drv8876_direction_control(true); //Retract motor
+
+	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+
+	//Are you sure to start refuel solder paste action ?
+	while(earlyExit == false){
+		ButtonState buttons = getButtonState();
+
+		switch (buttons) {
+			case BUTTON_NONE:
+				break;
+			case BUTTON_R_LONG:
+				break;
+			case BUTTON_L_LONG:
+				break;
+			case BUTTON_UP_LONG:
+				break;
+			case BUTTON_DOWN_LONG:
+				break;
+			case BUTTON_CENTER_LONG:
+			case BUTTON_ACTION_LONG:
+				// Abort the procedure
+				earlyExit = true;
+				break;
+			case BUTTON_R_SHORT:
+				break;
+			case BUTTON_L_SHORT:
+				break;
+			case BUTTON_UP_SHORT:
+				break;
+			case BUTTON_DOWN_SHORT:
+				break;
+			case BUTTON_CENTER_SHORT:
+				break;
+			default:
+				break;
+		}
+
+		if(counter == 100 && isFirstCounter){
+		//if(counter == 10 && isFirstCounter){
+			HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
+			isFirstCounter = false;
+			counter = 0;
+		}else if(counter == 150 && !isFirstCounter){
+			HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+			isFirstCounter = true;
+			counter = 0;
+		}else{
+			osDelay(10);
+			counter++;
+		}
+	}
+
+	HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
+	OLED_setFont(0);
+	OLED_setCursor(0, 0);
+	OLED_clearScreen();
+	OLED_print(ResetOKMessage);
+	OLED_refresh();
+
+	return false;
 }
 
-static bool settings_setVacuumPickUp(void) {
-	return true;
-}
-
-static void settings_displayVacuumPickUp(void) {
-	systemSettings.modeType = 2;
+static void settings_displayRefuelSolderPaste(void) {
 	printShortDescription(1, 0);
+}
+
+static bool settings_setChangeSyringe(void) {
+	/*
+	 * Procedure for changing or replacing a syringe
+	 *
+	 * Step 1 : Start motor in retract mode during 10s
+	 * Step 2 : Read the current and verify the motor is not block
+	 * Step 3 : If the motor is block print on screen "ERROR PROCEDURE" if not "PROCEDURE DONE"
+	 *
+	 */
+	return false;
+}
+
+static void settings_displayChangeSyringe(void) {
+	printShortDescription(2, 0);
 }
 /* end */
 
@@ -241,7 +326,7 @@ static bool settings_setContrast(bool isInc) {
 }
 
 static void settings_displayContrast(void) {
-	printShortDescription(2, 0);
+	printShortDescription(3, 0);
 
 	if(systemSettings.contrast == 100){
 		displayArrow(83);
@@ -266,7 +351,7 @@ static bool settings_setScrollSpeed(void) {
 }
 
 static void settings_displayScrollSpeed(void) {
-	printShortDescription(3, 7);
+	printShortDescription(4, 7);
 
 	displayArrow(85);
 
@@ -295,7 +380,7 @@ static bool settings_setResetSettings(void) {
 
 
 static void settings_displayResetSettings(void) {
-	printShortDescription(4, 0);
+	printShortDescription(5, 0);
 }
 /* end */
 
@@ -440,6 +525,7 @@ void gui_Menu(const menuitem *menu) {
 			case BUTTON_DOWN_LONG:
 				break;
 			case BUTTON_CENTER_SHORT:
+			case BUTTON_ACTION_SHORT:
 				if (descriptionStart == 0) {
 					if (menu[currentScreen].validateHandler != NULL) {
 						enterGUIMenu = false;
@@ -491,7 +577,9 @@ void gui_Menu(const menuitem *menu) {
 }
 
 void enterRootMenu() {
+	HAL_NVIC_DisableIRQ(EXTI0_IRQn);
 	gui_Menu(rootMenu);  // Call the root menu
 	systemSettings.isFirstStart = 0;
+	HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 	saveSettings();
 }

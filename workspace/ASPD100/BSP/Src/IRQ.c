@@ -5,8 +5,12 @@
  *      Author: Alan
  */
 
+#include "main.h"
+
 #include "IRQ.h"
 #include "gui.h"
+
+#include "DRV8876.h"
 /*
  * Catch the IRQ
  */
@@ -35,16 +39,19 @@ static volatile uint8_t click = 0;
 
 static volatile bool isTimerBtnStart = false;
 static volatile bool isTimerDebouncingStart = false;
+static volatile bool isTimerRetractMotor = false;
+static volatile bool isTimerRetractMotorFinish = true;
 static volatile bool isButtonHold = false;
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-	(void)GPIO_Pin;
+//	(void)GPIO_Pin;
 	//InterruptHandler_irqCallback();
-	if(GPIO_Pin == actionButton_Pin && !isTimerDebouncingStart){
+	if(GPIO_Pin == actionButton_Pin && !isTimerDebouncingStart){// && isTimerRetractMotorFinish){
 		__HAL_TIM_SET_COUNTER(&htim15, 0);
 		HAL_TIM_Base_Start_IT(&htim15);
 		__HAL_TIM_CLEAR_FLAG(&htim15, TIM_SR_UIF);
 		isTimerDebouncingStart = true;
+		isTimerRetractMotorFinish = false;
 	}
 }
 
@@ -67,6 +74,21 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	  //Timer to turn the motor during x time
 	  HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
 	  HAL_TIM_Base_Stop_IT(&htim7);
+
+	  if(isTimerRetractMotor){
+		  drv8876_direction_control(true); //Retract motor
+		  __HAL_TIM_SET_AUTORELOAD(&htim7, footPrints[counterFootprint].retractTime - 1); //Init timer period with the first value (0402)
+
+			HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+			HAL_TIM_Base_Start_IT(&htim7);
+			__HAL_TIM_CLEAR_FLAG(&htim7, TIM_SR_UIF);
+			isTimerRetractMotor = false;
+			isTimerRetractMotorFinish = true;
+	  }else{
+		  isTimerRetractMotor = true;
+		  drv8876_direction_control(false); //Push motor
+		  __HAL_TIM_SET_AUTORELOAD(&htim7, footPrints[counterFootprint].pushTime - 1); //Init timer period with the first value (0402)
+	  }
   }else if (htim->Instance == TIM15) {
 	  //Timer to debounce the action button
 	  HAL_TIM_Base_Stop_IT(&htim15);
@@ -77,12 +99,21 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		  if(getButtonAction()){
 			  //Pressed
 			  pressed++;
+#ifdef DOUBLE_CLICK
 			  if(!isTimerBtnStart){
 				  HAL_TIM_Base_Start_IT(&htim16);
 				  __HAL_TIM_SET_COUNTER(&htim16, 0);
 				  __HAL_TIM_CLEAR_FLAG(&htim16, TIM_SR_UIF);
 				  isTimerBtnStart = true;
-				}
+			  }
+#else
+			  BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+			  if (motorTaskNotification) {
+				  vTaskNotifyGiveFromISR(motorTaskNotification,
+							&xHigherPriorityTaskWoken);
+				  portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+			  }
+#endif
 		  }else{
 			  //Released
 			  released++;
@@ -100,7 +131,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		  }
 	  }
 	  isTimerDebouncingStart = false;
-  }else if (htim->Instance == TIM16) {
+  }
+#ifdef DOUBLE_CLICK
+  else if (htim->Instance == TIM16) {
 	  HAL_TIM_Base_Stop_IT(&htim16);
 
 	  if(click == 1){
@@ -122,6 +155,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	  pressed = released = click = 0;
 	  isTimerBtnStart = false;
   }
+#endif
   /* USER CODE BEGIN Callback 1 */
 
   /* USER CODE END Callback 1 */

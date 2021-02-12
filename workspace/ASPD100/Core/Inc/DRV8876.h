@@ -15,6 +15,8 @@ typedef struct drv8876_t{
 
 	uint16_t currentIPROPI; // This value is expressed in mA
 
+	bool isPush; // TODO
+
 	/*
 	 * Fault indicator output. Pulled low during a fault condition.
 	 *
