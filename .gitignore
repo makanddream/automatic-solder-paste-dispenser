@@ -79,7 +79,9 @@ PCB_Design/*/*/*
 *.scana
 
 # Not neccesary because can be re-generated
-/ASPD100-hw-cubeMX-config/Core/*
+ASPD100-hw-cubeMX-config/*
+!ASPD100-hw-cubeMX-config/ASPD100.ioc
+!ASPD100-hw-cubeMX-config/script-copy-new-generate-files-project.bat
 /ASPD100-hw-cubeMX-config/Drivers/*
 /ASPD100-hw-cubeMX-config/EWARM/*
 /ASPD100-hw-cubeMX-config/Middlewares/*
@@ -97,8 +99,11 @@ workspace/DRV8876-control/*
 /workspace/save-data-on-flash/*
 /workspace/STUSB4500_CONTROLLER/*
 /workspace/STUSB4500_CONTROLLER_V2/*
+/workspace/STM32L432KC_NUCLO_LED_BLINK/*
+/workspace/STM32L432KC_NUCLEO_DFU/*
 /docs/datasheet/*
 /PowerManagement/*
 /docs/PCB_MECHANICAL.RUL
 /docs/en.EVAL-SCS001V1_BOM.xls
 /docs/aspd100-3d-model/*
+Demonstration/*
