@@ -16,6 +16,8 @@
 
 #include "DRV8876.h"
 
+#include "version.h"
+
 void gui_Menu(const menuitem *menu);
 
 /* Functions of the root menu */
@@ -37,6 +39,10 @@ static bool settings_setContrast(bool isInc);
 static void settings_displayContrast(void);
 static bool settings_setScrollSpeed(void);
 static void settings_displayScrollSpeed(void);
+static bool settings_setDFU(void);
+static void settings_displayDFU(void);
+static bool settings_setDeviceInformation(void);
+static void settings_displayDeviceInformation(void);
 static bool settings_setResetSettings(void);
 static void settings_displayResetSettings(void);
 
@@ -92,9 +98,11 @@ const menuitem SettingsMenu[] = {
 	 *		- Automatic solder paste dispenser option
 	 *		- Vacuum pick-up mode option
 	 */
-	{ (const char*) SettingsDescriptions[2], NULL, settings_setContrast, settings_displayContrast }, /* Scroll Speed for descriptions */
-	{ (const char*) SettingsDescriptions[3], NULL, settings_setScrollSpeed, settings_displayScrollSpeed }, /* Scroll Speed for descriptions */
-	{ (const char*) SettingsDescriptions[4], NULL, settings_setResetSettings, settings_displayResetSettings }, /* Resets settings */
+	{ (const char*) SettingsDescriptions[3], NULL, settings_setContrast, settings_displayContrast }, /* Scroll Speed for descriptions */
+	{ (const char*) SettingsDescriptions[4], NULL, settings_setScrollSpeed, settings_displayScrollSpeed }, /* Scroll Speed for descriptions */
+	{ (const char*) SettingsDescriptions[5], settings_setDFU, NULL, settings_displayDFU }, /* DFU descriptions */
+	{ (const char*) SettingsDescriptions[6], settings_setDeviceInformation, NULL, settings_displayDeviceInformation }, /* Resets settings */
+	{ (const char*) SettingsDescriptions[7], settings_setResetSettings, NULL, settings_displayResetSettings }, /* Resets settings */
 
 	{ NULL, NULL, NULL, NULL }	// end of menu marker. DO NOT REMOVE
 };
@@ -121,7 +129,7 @@ static void printShortDescription(uint32_t shortDescIndex,
 
 	// prepare cursor for value
 	OLED_setFont(0);
-	OLED_setCharCursor(cursorCharPosition, 0);
+	OLED_setCharCursor(cursorCharPosition, 8);
 	// make room for scroll indicator
 	OLED_setCursor(OLED_getCursorX() - 2, 0);
 }
@@ -308,18 +316,20 @@ static void settings_displayChangeSyringe(void) {
 /* Start functions of the settings menu options */
 static bool settings_setContrast(bool isInc) {
 	if(isInc){
-		if (systemSettings.contrast > 100) {
-			systemSettings.contrast = 0;  // loop back at 255
+		if (systemSettings.contrast == 100) {
+			systemSettings.contrast = 10;  // loop back at 100
 		} else {
 			systemSettings.contrast += 10;  // Go up 10C at a time
 		}
 	}else{
-		if (systemSettings.contrast == 0) {
-			systemSettings.contrast = 100;  // loop back at 255
+		if (systemSettings.contrast == 10) {
+			systemSettings.contrast = 100;  // loop back at 100
 		} else {
 			systemSettings.contrast -= 10;  // Go up 10C at a time
 		}
 	}
+
+	OLED_setDisplayContrast(systemSettings.contrast);
 
 	osDelay(25);
 	return systemSettings.contrast == 100;
@@ -335,6 +345,7 @@ static void settings_displayContrast(void) {
 		OLED_printNumber(systemSettings.contrast, 3, true);
 	}else{
 		displayArrow(88);
+
 		OLED_setCursor(81, 8);
 		OLED_printNumber(systemSettings.contrast, 2, true);
 	}
@@ -363,15 +374,123 @@ static void settings_displayScrollSpeed(void) {
 	}
 }
 
+static bool settings_setDFU(void) {
+
+#ifdef DFU_ACTIVATE
+	/*
+	 * Option bytes programming :
+	 * 	After reset, the options related bits in the Flash control register (FLASH_CR) are writeprotected.
+	 * 	To run any operation on the option bytes page, the option lock bit OPTLOCK in
+	 * 	the Flash control register (FLASH_CR) must be cleared. The following sequence is used to
+	 * 	unlock this register:
+	 */
+    HAL_FLASH_Unlock();
+
+    /*
+     * Modifying user options :
+     *
+     * 		1. Check that no Flash memory operation is on going by checking the BSY bit in the Flash
+     *			status register (FLASH_SR).
+     *		2. Clear OPTLOCK option lock bit with the clearing sequence described above.
+     *		3. Write the desired options value in the options registers
+     *		4. Set the Options Start bit OPTSTRT in the Flash control register (FLASH_CR).
+     *		5. Wait for the BSY bit to be cleared.
+     */
+    FLASH_WaitForLastOperation((uint32_t)FLASH_TIMEOUT_VALUE);
+
+    HAL_FLASH_OB_Unlock();
+
+    SET_BIT(FLASH->OPTR, FLASH_OPTR_nBOOT1);
+    CLEAR_BIT(FLASH->OPTR, FLASH_OPTR_nBOOT0);
+    CLEAR_BIT(FLASH->OPTR, FLASH_OPTR_nSWBOOT0);
+
+    FLASH_WaitForLastOperation((uint32_t)FLASH_TIMEOUT_VALUE);
+
+    SET_BIT(FLASH->CR, FLASH_CR_OPTSTRT);
+
+    FLASH_WaitForLastOperation((uint32_t)FLASH_TIMEOUT_VALUE);
+
+    /*
+     * Option byte loading :
+     * 		After the BSY bit is cleared, all new options are updated into the flash but they are not
+     * 		applied to the system. They will have effect on the system when they are loaded. Option
+     * 		bytes loading (OBL) is performed in two cases:
+     * 			– When OBL_LAUNCH bit is set in the Flash control register (FLASH_CR).
+     * 			– After a power reset (BOR reset or exit from Standby/Shutdown modes).
+     */
+    HAL_FLASH_OB_Launch();
+    HAL_NVIC_SystemReset();
+#endif
+
+	return false;
+}
+
+static void settings_displayDFU(void) {
+	printShortDescription(5, 0);
+}
+
+static bool settings_setDeviceInformation(void) {
+
+	OLED_clearScreen();
+	OLED_setFont(1);
+
+	/*
+	 * Print hardware version
+	 */
+	OLED_setCharCursor(0, 1);
+	OLED_print(HardwareVersion);
+	OLED_setCharCursor(13, 1);
+	OLED_printNumber(HARDWARE_MAJOR_VERSION, 1, true);
+	OLED_setCharCursor(14, 1);
+	OLED_print(SymbolDot);
+	OLED_setCharCursor(15, 1);
+	OLED_printNumber(HARDWARE_MINOR_VERSION, 1, true);
+	OLED_setCharCursor(16, 1);
+	OLED_print(SymbolDot);
+	OLED_setCharCursor(17, 1);
+	OLED_printNumber(HARDWARE_PATCH_VERSION, 1, true);
+
+	/*
+	 * Print software version
+	 */
+	OLED_setCharCursor(0, 3);
+	OLED_print(SoftwareVersion);
+	OLED_setCharCursor(13, 3);
+	OLED_printNumber(SOFTWARE_MAJOR_VERSION, 1, true);
+	OLED_setCharCursor(14, 3);
+	OLED_print(SymbolDot);
+	OLED_setCharCursor(15, 3);
+	OLED_printNumber(SOFTWARE_MINOR_VERSION, 1, true);
+	OLED_setCharCursor(16, 3);
+	OLED_print(SymbolDot);
+	OLED_setCharCursor(17, 3);
+	OLED_printNumber(SOFTWARE_PATCH_VERSION, 1, true);
+
+	OLED_refresh();
+
+	osDelay(25);
+
+	waitForButtonPress();
+
+	return false;
+}
+
+
+static void settings_displayDeviceInformation(void) {
+	printShortDescription(6, 0);
+}
+
 static bool settings_setResetSettings(void) {
 	if (userConfirmation(SettingsResetWarning)) {
 		resetSettings();
 
 		OLED_setFont(0);
-		OLED_setCursor(0, 0);
+		OLED_setCursor(20, 8);
 		OLED_clearScreen();
 		OLED_print(ResetOKMessage);
 		OLED_refresh();
+
+		osDelay(25);
 
 		waitForButtonPressOrTimeout(2000);  // 2 second timeout
 	}
@@ -380,7 +499,7 @@ static bool settings_setResetSettings(void) {
 
 
 static void settings_displayResetSettings(void) {
-	printShortDescription(5, 0);
+	printShortDescription(7, 0);
 }
 /* end */
 

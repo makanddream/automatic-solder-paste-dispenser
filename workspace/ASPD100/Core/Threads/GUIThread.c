@@ -13,6 +13,8 @@
 
 #include "configuration.h"
 
+#include "version.h"
+
 void GUIDelay() {
 	// Called in all UI looping tasks,
 	// This limits the re-draw rate to the LCD and also lets the DMA run
@@ -59,6 +61,94 @@ static void displayArrowState(ArrowState arrowState, int16_t x){
 		// Nothing
 	}
 	osDelay(50);
+}
+
+/**
+ * Function to perform jump to system memory boot from user application
+ *
+ * Call function when you want to jump to system memory
+ */
+void remove_dfu(void) {
+
+#ifdef DFU_ACTIVATE
+	/*
+	 * Option bytes programming :
+	 * 	After reset, the options related bits in the Flash control register (FLASH_CR) are writeprotected.
+	 * 	To run any operation on the option bytes page, the option lock bit OPTLOCK in
+	 * 	the Flash control register (FLASH_CR) must be cleared. The following sequence is used to
+	 * 	unlock this register:
+	 */
+    HAL_FLASH_Unlock();
+
+    /*
+     * Modifying user options :
+     *
+     * 		1. Check that no Flash memory operation is on going by checking the BSY bit in the Flash
+     *			status register (FLASH_SR).
+     *		2. Clear OPTLOCK option lock bit with the clearing sequence described above.
+     *		3. Write the desired options value in the options registers
+     *		4. Set the Options Start bit OPTSTRT in the Flash control register (FLASH_CR).
+     *		5. Wait for the BSY bit to be cleared.
+     */
+    FLASH_WaitForLastOperation((uint32_t)FLASH_TIMEOUT_VALUE);
+
+    HAL_FLASH_OB_Unlock();
+
+    if(READ_BIT(FLASH->OPTR, FLASH_OPTR_nBOOT1)){
+    	CLEAR_BIT(FLASH->OPTR, FLASH_OPTR_nBOOT1);
+    	SET_BIT(FLASH->OPTR, FLASH_OPTR_nBOOT0);
+    	SET_BIT(FLASH->OPTR, FLASH_OPTR_nSWBOOT0);
+
+        FLASH_WaitForLastOperation((uint32_t)FLASH_TIMEOUT_VALUE);
+
+        SET_BIT(FLASH->CR, FLASH_CR_OPTSTRT);
+
+        FLASH_WaitForLastOperation((uint32_t)FLASH_TIMEOUT_VALUE);
+
+        /*
+         * Option byte loading :
+         * 		After the BSY bit is cleared, all new options are updated into the flash but they are not
+         * 		applied to the system. They will have effect on the system when they are loaded. Option
+         * 		bytes loading (OBL) is performed in two cases:
+         * 			– When OBL_LAUNCH bit is set in the Flash control register (FLASH_CR).
+         * 			– After a power reset (BOR reset or exit from Standby/Shutdown modes).
+         */
+        HAL_FLASH_OB_Launch();
+        HAL_NVIC_SystemReset();
+    }
+
+	/* Lock the Flash to disable the flash control register access (recommended
+	 * to protect the FLASH memory against possible unwanted operation) ********
+	 */
+    HAL_FLASH_Lock();
+#endif
+
+}
+
+/*
+ * Function to check if a new version has just been installed
+ */
+void software_verification(void){
+	if(systemSettings.firmwareMajorVersion != SOFTWARE_MAJOR_VERSION || systemSettings.firmwareMinorVersion != SOFTWARE_MINOR_VERSION || systemSettings.firmwarePatchVersion != SOFTWARE_PATCH_VERSION){
+		//New version detected
+		OLED_setFont(0);
+		OLED_setCursor(0, 8);
+		OLED_clearScreen();
+		OLED_print(NewFirmware);
+
+		systemSettings.hardwareMajorVersion = HARDWARE_MAJOR_VERSION;
+		systemSettings.hardwareMinorVersion = HARDWARE_MINOR_VERSION;
+		systemSettings.hardwarePatchVersion = HARDWARE_PATCH_VERSION;
+
+		systemSettings.firmwareMajorVersion = SOFTWARE_MAJOR_VERSION;
+		systemSettings.firmwareMinorVersion = SOFTWARE_MINOR_VERSION;
+		systemSettings.firmwarePatchVersion = SOFTWARE_PATCH_VERSION;
+
+		saveSettings();
+
+		OLED_refresh();
+		osDelay(4000);
+	}
 }
 
 static void gui_automaticSolderPasteDispenserMode(void) {
@@ -202,6 +292,10 @@ void StartGUITask(void *argument)
 	OLED_initialize();  // start up the OLED screen
 
 	bool startRootMenu = true;
+
+	software_verification();
+
+	remove_dfu(); //Remove DFU if it's necessary
 
 	for (;;) {
 		if(startRootMenu){
