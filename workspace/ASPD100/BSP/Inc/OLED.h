@@ -57,6 +57,8 @@ uint8_t OLED_getFont();
 
 void OLED_drawImage(const uint8_t *buffer, uint8_t x, uint8_t width); // Draws an image to the buffer, at x offset from top to bottom (fixed height renders)
 
+void OLED_printFloatNumber(double number, uint8_t lenght);
+
 void OLED_printNumber(uint16_t number, uint8_t places, bool noLeaderZeros); // Draws a number at the current cursor location
 
 // Clears the buffer

@@ -43,8 +43,8 @@ uint8_t OLED_Setup_Array[] = {
 	CMD_TYPE, 0x40, 										/* Set Display start line to 0 */
 	CMD_TYPE, 0x8D, CMD_TYPE, 0x14,							/* Charge Pump settings*/
 	CMD_TYPE, CMD_SET_CONTRAST_CONTROL, CMD_TYPE, 0xFF, 	/* Contrast to 100% */
-	CMD_TYPE, CMD_SET_PRE_CHARGE_PERIOD, CMD_TYPE, 0xF1,					/* Set pre-charge period 0xF1 or 0x22 */
-	CMD_TYPE, CMD_SET_V_COMH_DESELECT_LEVEL, CMD_TYPE, 0x30,							/* Adjust VCOMH level regulator output */
+	CMD_TYPE, CMD_SET_PRE_CHARGE_PERIOD, CMD_TYPE, 0xF1,	/* Set pre-charge period 0xF1 or 0x22 */
+	CMD_TYPE, CMD_SET_V_COMH_DESELECT_LEVEL, CMD_TYPE, 0x30,/* Adjust VCOMH level regulator output */
 	CMD_TYPE, CMD_RESUME_DISPLAY_TO_GDDRAM, 				/* Enable the display GDDR */
 	CMD_TYPE, CMD_SET_NORMAL_DISPLAY, 						/* Normal display */
 	CMD_TYPE, CMD_SET_MEMORY_ADDRESSING_MODE, CMD_TYPE, 0x00, /* Memory Mode to horizontal addressing mode*/
@@ -53,8 +53,8 @@ uint8_t OLED_Setup_Array[] = {
 
 
 const uint8_t REFRESH_COMMANDS[] = {
-	CMD_TYPE, CMD_DISPLAY_ON, /* Display on */
-	CMD_TYPE, CMD_SET_CONTRAST_CONTROL, CMD_TYPE, 0x00, 	/* Contrast to 100% */
+	CMD_TYPE, CMD_DISPLAY_ON, 											/* Display on */
+	CMD_TYPE, CMD_SET_CONTRAST_CONTROL, CMD_TYPE, 0x0A, 				/* Contrast to 100 % */
 	CMD_TYPE, CMD_SET_COLUMN_ADDRESS, CMD_TYPE, 0x00, CMD_TYPE, 0x7F, 	/* Setup column start and end address */
 	CMD_TYPE, CMD_SET_MEMORY_ADDRESSING_MODE, CMD_TYPE, 0x00, 			/* Set Memory Addressing Mode to Horizontal Addressing Mode */
 	CMD_TYPE, CMD_SET_PAGE_ADDRESS, CMD_TYPE, 0x00, CMD_TYPE, 0x03, 	/* Setup page start and end address */
@@ -359,6 +359,34 @@ inline void stripLeaderZeros(char *buffer, uint8_t places) {
 		}
 	}
 }
+
+void OLED_printFloatNumber(double number, uint8_t lenght) {
+	char buffer[lenght+2]; //+1 for '.' and +1 for '\0'
+	char num[1];
+	char strNumber[lenght+2];
+
+	uint8_t ctn = 0;
+	uint8_t number1 = 0;
+
+	snprintf(strNumber, lenght+2, "%f", number);
+
+	while(ctn < lenght+1){
+		if(strNumber[ctn] == '.'){
+			buffer[ctn] = *SymbolDot;
+		}else{
+			strncpy(num, &strNumber[ctn], 1);
+
+			number1 = atoi(num);
+			buffer[ctn] = 2 + number1 % 10;
+		}
+		ctn++;
+	}
+
+	buffer[ctn] = '\0';
+
+	OLED_print(buffer);
+}
+
 // maximum places is 5
 void OLED_printNumber(uint16_t number, uint8_t places, bool noLeaderZeros) {
 	char buffer[7] = { 0 };
