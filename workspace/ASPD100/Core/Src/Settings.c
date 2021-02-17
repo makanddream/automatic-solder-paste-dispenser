@@ -13,6 +13,8 @@
 #include "../../configuration.h"
 #include "BSP.h"
 
+#include "version.h"
+
 #include "string.h"
 volatile systemSettingsType systemSettings;
 
@@ -40,14 +42,22 @@ bool restoreSettings() {
 void resetSettings() {
 	memset((void*) &systemSettings, 0, sizeof(systemSettingsType));
 
-	systemSettings.version =		SETTINGS_VERSION; // Store the version number to allow for easier upgrades
+	systemSettings.version =					SETTINGS_VERSION;	// Store the version number to allow for easier upgrades
 
-	systemSettings.SleepTime =		SLEEP_TIME; // How many seconds/minutes we wait until going
-	systemSettings.contrast =		CONSTRAST_VALUE; // The default contrast is 50%
-	systemSettings.isFirstStart =	FIRST_START;  // TODO
-	systemSettings.modeType =		DEFAULT_MODE; //TODO
+	systemSettings.hardwareMajorVersion =		HARDWARE_MAJOR_VERSION;	// Store the hardware major version number
+	systemSettings.hardwareMinorVersion =		HARDWARE_MINOR_VERSION;	// Store the hardware minor version number
+	systemSettings.hardwarePatchVersion =		HARDWARE_PATCH_VERSION;	// Store the hardware patch version number
 
-	systemSettings.descriptionScrollSpeed = DESCRIPTION_SCROLL_SPEED; // default to slow
+	systemSettings.firmwareMajorVersion =		SOFTWARE_MAJOR_VERSION;	// Store the firmware major version number
+	systemSettings.firmwareMinorVersion =		SOFTWARE_MINOR_VERSION;	// Store the firmware major version number
+	systemSettings.firmwarePatchVersion =		SOFTWARE_PATCH_VERSION;	// Store the firmware major version number
+
+	systemSettings.sleepTime =					SLEEP_TIME; 		// How many seconds/minutes we wait until going
+	systemSettings.contrast =					CONSTRAST_VALUE;	// The default contrast is 50%
+	systemSettings.isFirstStart =				FIRST_START;		// TODO
+	systemSettings.modeType =					DEFAULT_MODE;		// TODO
+
+	systemSettings.descriptionScrollSpeed = 	DESCRIPTION_SCROLL_SPEED; // Default to slow
 
 	saveSettings();  // Save defaults
 }
