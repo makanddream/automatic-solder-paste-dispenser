@@ -129,6 +129,21 @@ var def =
 			"default": "DOWN"
 		},
 		{
+			"id": "NewFirmware",
+			"maxLen": 10,
+			"default": "New firmware"
+		},
+		{
+			"id": "HardwareVersion",
+			"maxLen": 10,
+			"default": "Hardware Version :"
+		},
+		{
+			"id": "SoftwareVersion",
+			"maxLen": 10,
+			"default": "Software Version :"
+		},
+		{
 			"id": "UserConfirmation",
 			"maxLen": 8
 		}		
@@ -328,6 +343,16 @@ var def =
 		},
 		{
 			"id": "ScrollingSpeed",
+			"maxLen": 6,
+			"maxLen2": 11
+		},
+		{
+			"id": "DFU",
+			"maxLen": 6,
+			"maxLen2": 11
+		},
+		{
+			"id": "DeviceInformation",
 			"maxLen": 6,
 			"maxLen2": 11
 		},

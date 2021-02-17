@@ -30,6 +30,9 @@
 		"Mode2": "Vacuum Pick-Up",
 		"UPString": "UP",
 		"DOWNString": "DOWN",
+		"NewFirmware": "New firmware",
+		"HardwareVersion": "HW Version :",
+		"SoftwareVersion": "SW Version :",
 		"UserConfirmation": "User Confirmation"
 	},
 	"characters": {
@@ -122,6 +125,20 @@
 				"speed"
 			],
 			"desc": "Speed this text scrolls past at <S=Slow F=Fast>"
+		},
+		"DFU": {
+			"text2": [
+				"Upgrade the firmware",
+				""
+			],
+			"desc": "Start the DFU mode, to update the firmware"
+		},
+		"DeviceInformation": {
+			"text2": [
+				"Device Information",
+				""
+			],
+			"desc": "Information about the device"
 		},
 		"SettingsReset": {
 			"text2": [

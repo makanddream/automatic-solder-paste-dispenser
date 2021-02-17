@@ -18,6 +18,10 @@ extern const char *SettingsShortNames[28][2];
 extern const char SettingsDescriptions[28][50];
 extern const char *RootMenuEntries[2];
 
+extern const char* HardwareVersion;
+extern const char* SoftwareVersion;
+extern const char* DeviceInformation;
+extern const char* NewFirmware;
 extern const char *SettingsResetWarning;
 extern const char *RefuelProcedureWarning;
 extern const char *UVLOWarningString;
