@@ -1,8 +1,8 @@
 # Automatic Solder Paste Dispenser (ASPD100)
 
-| 3D Case Design | 3D PCB Design |
-| ------------- | ------------- |
-| <img src="https://github.com/diy-dream/automatic-solder-paste-dispenser/blob/master/docs/3DModelDesign.png" width="150"> | <img src="https://github.com/diy-dream/automatic-solder-paste-dispenser/blob/master/docs/3D_ASPD100_PCB_DESIGN.PNG" width="220"> |
+| 3D Case Design | 3D PCB Design | First prototype |
+| ------------- | ------------- | ------------- |
+| <img src="https://github.com/makanddream/automatic-solder-paste-dispenser/blob/master/docs/3DModelDesign.png" width="150"> | <img src="https://github.com/makanddream/automatic-solder-paste-dispenser/blob/master/docs/3D_ASPD100_PCB_DESIGN.PNG" width="220"> | <img src="https://github.com/makanddream/automatic-solder-paste-dispenser/blob/master/docs/FirstPrototype.jpg" width="220">
 
 ## Table of contents
 * [Summary](#summary)
