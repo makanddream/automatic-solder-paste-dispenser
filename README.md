@@ -1,6 +1,8 @@
 # Automatic Solder Paste Dispenser (ASPD100)
 
-<img src="https://github.com/diy-dream/automatic-solder-paste-dispenser/blob/master/docs/3DModelDesign.png" width="150">
+| 3D Case Design | 3D PCB Design |
+| ------------- | ------------- |
+| <img src="https://github.com/diy-dream/automatic-solder-paste-dispenser/blob/master/docs/3DModelDesign.png" width="150"> | <img src="https://github.com/diy-dream/automatic-solder-paste-dispenser/blob/master/docs/3D_ASPD100_PCB_DESIGN.PNG" width="220"> |
 
 ## Table of contents
 * [Summary](#summary)
@@ -73,4 +75,4 @@ The product will be available soon on the https://www.tindie.com/ platform.
 The code created by the community is GNU GPLv3. Unless noted elsewhere. Other components such as HAL/FreeRTOS have their own licence.
 
 ## Commercial Use
-This software is provided as-is, so I cannot provide any commercial support for the firmware. However, you are more than welcome to distribute links to the firmware, or provide irons with this software on them. Please do not re-host the files, but rather link to this page, so that there are no old versions of the firmware scattered around.
+This software is provided as-is, so I cannot provide any commercial support for the firmware. Please do not re-host the files, but rather link to this page, so that there are no old versions of the firmware scattered around.
