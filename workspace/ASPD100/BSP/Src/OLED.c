@@ -101,13 +101,13 @@ void OLED_initialize() {
 	OLED_setDisplayState(ON);
 	OLED_setDisplayContrast(systemSettings.contrast); // 50%
 
-	FRToSI2C_Transmit(DEVICEADDR_OLED, &OLED_Setup_Array[0],
+	I2C_Transmit(DEVICEADDR_OLED, &OLED_Setup_Array[0],
 			sizeof(OLED_Setup_Array));
 }
 
 // Draw the buffer out to the LCD using the DMA Channel
 void OLED_refresh() {
-	FRToSI2C_Transmit(DEVICEADDR_OLED, OLED.screenBuffer, sizeof(REFRESH_COMMANDS) + (OLED_WIDTH * OLED_HEIGHT / 8));
+	I2C_Transmit(DEVICEADDR_OLED, OLED.screenBuffer, sizeof(REFRESH_COMMANDS) + (OLED_WIDTH * OLED_HEIGHT / 8));
 	//DMA tx time is ~ 20mS Ensure after calling this you delay for at least 25ms
 	//or we need to goto double buffering
 }
@@ -306,7 +306,7 @@ void OLED_setRotation(bool leftHanded) {
 		OLED_Setup_Array[11] = 0xC0;
 		OLED_Setup_Array[19] = 0xA0;
 	}
-	FRToSI2C_Transmit(DEVICEADDR_OLED, (uint8_t*) OLED_Setup_Array,
+	I2C_Transmit(DEVICEADDR_OLED, (uint8_t*) OLED_Setup_Array,
 			sizeof(OLED_Setup_Array));
 	OLED.inLeftHandedMode = leftHanded;
 

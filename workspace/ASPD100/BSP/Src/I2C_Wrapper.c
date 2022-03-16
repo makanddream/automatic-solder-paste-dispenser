@@ -64,7 +64,7 @@ bool FRToSI2C_Mem_Write(uint16_t DevAddress, uint16_t MemAddress,
 	return true;
 }
 
-bool FRToSI2C_Transmit(uint16_t DevAddress, uint8_t *pData, uint16_t Size) {
+bool I2C_Transmit(uint16_t DevAddress, uint8_t *pData, uint16_t Size) {
 	if (FRToSI2C_lock() != osOK)
 		return false;
 	if (HAL_I2C_Master_Transmit_DMA(&hi2c1, DevAddress, pData, Size)

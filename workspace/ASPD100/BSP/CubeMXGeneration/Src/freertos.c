@@ -53,15 +53,15 @@ typedef StaticSemaphore_t osStaticSemaphoreDef_t;
 osThreadId_t GUITaskHandle;
 const osThreadAttr_t GUITask_attributes = {
   .name = "GUITask",
+  .stack_size = 1024 * 4,
   .priority = (osPriority_t) osPriorityBelowNormal,
-  .stack_size = 1024 * 4
 };
-/* Definitions for MotorTask */
-osThreadId_t MotorTaskHandle;
-const osThreadAttr_t MotorTask_attributes = {
-  .name = "MotorTask",
+/* Definitions for StepperMotorTas */
+osThreadId_t StepperMotorTasHandle;
+const osThreadAttr_t StepperMotorTas_attributes = {
+  .name = "StepperMotorTas",
+  .stack_size = 512 * 4,
   .priority = (osPriority_t) osPriorityRealtime,
-  .stack_size = 512 * 4
 };
 /* Definitions for FRToSI2C_I2CSemaphore */
 osSemaphoreId_t FRToSI2C_I2CSemaphoreHandle;
@@ -78,7 +78,7 @@ const osSemaphoreAttr_t FRToSI2C_I2CSemaphore_attributes = {
 /* USER CODE END FunctionPrototypes */
 
 void StartGUITask(void *argument);
-void StartMotorTask(void *argument);
+void StartStepperMotorTask(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -116,8 +116,8 @@ void MX_FREERTOS_Init(void) {
   /* creation of GUITask */
   GUITaskHandle = osThreadNew(StartGUITask, NULL, &GUITask_attributes);
 
-  /* creation of MotorTask */
-  MotorTaskHandle = osThreadNew(StartMotorTask, NULL, &MotorTask_attributes);
+  /* creation of StepperMotorTas */
+  StepperMotorTasHandle = osThreadNew(StartStepperMotorTask, NULL, &StepperMotorTas_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -128,10 +128,3 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE END RTOS_EVENTS */
 
 }
-
-/* Private application code --------------------------------------------------*/
-/* USER CODE BEGIN Application */
-
-/* USER CODE END Application */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

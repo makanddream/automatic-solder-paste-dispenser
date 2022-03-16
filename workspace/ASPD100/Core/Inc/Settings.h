@@ -35,6 +35,7 @@ typedef struct {
 
 	uint8_t sleepTime;				// minutes timeout to sleep
 	uint8_t contrast;				// contrast value
+	uint8_t ledsBrightness;				// brightness value
 	uint8_t isFirstStart;			// contrast value
 	uint8_t modeType;
 	uint8_t descriptionScrollSpeed :1;  // Description scroll speed

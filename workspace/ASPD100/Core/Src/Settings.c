@@ -53,7 +53,8 @@ void resetSettings() {
 	systemSettings.firmwarePatchVersion =		SOFTWARE_PATCH_VERSION;	// Store the firmware major version number
 
 	systemSettings.sleepTime =					SLEEP_TIME; 		// How many seconds/minutes we wait until going
-	systemSettings.contrast =					CONSTRAST_VALUE;	// The default contrast is 50%
+	systemSettings.contrast =					CONTRAST_VALUE;		// The default contrast is 50%
+	systemSettings.ledsBrightness = 			LEDS_BRIGHTNESS;	// The default leds brightness is 50%
 	systemSettings.isFirstStart =				FIRST_START;		// TODO
 	systemSettings.modeType =					DEFAULT_MODE;		// TODO
 

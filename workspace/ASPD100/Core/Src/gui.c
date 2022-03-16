@@ -14,8 +14,6 @@
 #include "../../configuration.h"
 #include "Buttons.h"
 
-#include "DRV8876.h"
-
 #include "version.h"
 
 void gui_Menu(const menuitem *menu);
@@ -37,6 +35,8 @@ static void settings_displayChangeSyringe(void);
 /* Functions of the settings menu options */
 static bool settings_setContrast(bool isInc);
 static void settings_displayContrast(void);
+static bool settings_setLedsBrightness(bool isInc);
+static void settings_displayLedsBrightness(void);
 static bool settings_setScrollSpeed(void);
 static void settings_displayScrollSpeed(void);
 static bool settings_setDFU(void);
@@ -99,10 +99,11 @@ const menuitem SettingsMenu[] = {
 	 *		- Vacuum pick-up mode option
 	 */
 	{ (const char*) SettingsDescriptions[3], NULL, settings_setContrast, settings_displayContrast }, /* Scroll Speed for descriptions */
-	{ (const char*) SettingsDescriptions[4], NULL, settings_setScrollSpeed, settings_displayScrollSpeed }, /* Scroll Speed for descriptions */
-	{ (const char*) SettingsDescriptions[5], settings_setDFU, NULL, settings_displayDFU }, /* DFU descriptions */
-	{ (const char*) SettingsDescriptions[6], settings_setDeviceInformation, NULL, settings_displayDeviceInformation }, /* Resets settings */
-	{ (const char*) SettingsDescriptions[7], settings_setResetSettings, NULL, settings_displayResetSettings }, /* Resets settings */
+	{ (const char*) SettingsDescriptions[4], NULL, settings_setLedsBrightness, settings_displayLedsBrightness }, /* Scroll Speed for descriptions */
+	{ (const char*) SettingsDescriptions[5], NULL, settings_setScrollSpeed, settings_displayScrollSpeed }, /* Scroll Speed for descriptions */
+	{ (const char*) SettingsDescriptions[6], settings_setDFU, NULL, settings_displayDFU }, /* DFU descriptions */
+	{ (const char*) SettingsDescriptions[7], settings_setDeviceInformation, NULL, settings_displayDeviceInformation }, /* Resets settings */
+	{ (const char*) SettingsDescriptions[8], settings_setResetSettings, NULL, settings_displayResetSettings }, /* Resets settings */
 
 	{ NULL, NULL, NULL, NULL }	// end of menu marker. DO NOT REMOVE
 };
@@ -218,20 +219,18 @@ static bool settings_setAutomaticFootprints(void) {
 }
 
 static void settings_displayAutomaticFootprints(void) {
-	printShortDescription(0, 0);}
+	printShortDescription(0, 0);
+}
 
 static bool settings_setRefuelSolderPaste(void) {
 
 	bool earlyExit = false;
-	bool isFirstCounter = true;
-	uint8_t counter = 0;
+	uint32_t pwmDutyCycle = stepCounterPeriod / 2; // 50%
 
-	HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-	drv8876_driver_wakeup();
-	drv8876_speed_control(100);
-	drv8876_direction_control(true); //Retract motor
+	HAL_NVIC_DisableIRQ(EXTI9_5_IRQn);
+	HAL_NVIC_DisableIRQ(DMA1_Channel2_IRQn);
 
-	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+	tmc2208_change_direction(&tmc2208, E_BACKWARD);
 
 	//Are you sure to start refuel solder paste action ?
 	while(earlyExit == false){
@@ -239,8 +238,15 @@ static bool settings_setRefuelSolderPaste(void) {
 
 		switch (buttons) {
 			case BUTTON_NONE:
+				HAL_TIM_PWM_Stop_DMA(&htim1, TIM_CHANNEL_1);
 				break;
 			case BUTTON_R_LONG:
+				// Number of steps performed by the stepper motor
+				if (HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_1, &pwmDutyCycle, 10000) != HAL_OK)
+				{
+					/* PWM Generation Error */
+					Error_Handler();
+				}
 				break;
 			case BUTTON_L_LONG:
 				break;
@@ -266,23 +272,8 @@ static bool settings_setRefuelSolderPaste(void) {
 			default:
 				break;
 		}
-
-		if(counter == 100 && isFirstCounter){
-		//if(counter == 10 && isFirstCounter){
-			HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
-			isFirstCounter = false;
-			counter = 0;
-		}else if(counter == 150 && !isFirstCounter){
-			HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
-			isFirstCounter = true;
-			counter = 0;
-		}else{
-			osDelay(10);
-			counter++;
-		}
 	}
 
-	HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
 	OLED_setFont(0);
 	OLED_setCursor(0, 0);
 	OLED_clearScreen();
@@ -353,6 +344,44 @@ static void settings_displayContrast(void) {
 	OLED_print(SymbolPrc);
 }
 
+static bool settings_setLedsBrightness(bool isInc) {
+
+	if (systemSettings.ledsBrightness == 1) {
+		systemSettings.ledsBrightness = 0;  // loop back at 100
+	} else {
+		systemSettings.ledsBrightness = 1;  // Go up 10C at a time
+	}
+
+	if(systemSettings.ledsBrightness == 1){
+		HAL_GPIO_WritePin(LEDs_CTR_GPIO_Port, LEDs_CTR_Pin, GPIO_PIN_SET);
+	}else{
+		HAL_GPIO_WritePin(LEDs_CTR_GPIO_Port, LEDs_CTR_Pin, GPIO_PIN_RESET);
+	}
+
+	osDelay(25);
+	return systemSettings.ledsBrightness == 1;
+}
+
+static void settings_displayLedsBrightness(void) {
+	printShortDescription(4, 0);
+
+	if(systemSettings.ledsBrightness == 1){
+		displayArrow(83);
+
+		OLED_setCursor(70, 8);
+		OLED_print(OnString);
+		//OLED_printNumber(systemSettings.ledsBrightness, 3, true);
+	}else{
+		displayArrow(88);
+
+		OLED_setCursor(81, 8);
+		OLED_print(OffString);
+		//OLED_printNumber(systemSettings.ledsBrightness, 2, true);
+	}
+	OLED_setCursor(106, 8);
+	//OLED_print(SymbolPrc);
+}
+
 static bool settings_setScrollSpeed(void) {
 	if (systemSettings.descriptionScrollSpeed == 0)
 		systemSettings.descriptionScrollSpeed = 1;
@@ -362,7 +391,7 @@ static bool settings_setScrollSpeed(void) {
 }
 
 static void settings_displayScrollSpeed(void) {
-	printShortDescription(4, 7);
+	printShortDescription(5, 7);
 
 	displayArrow(85);
 
@@ -426,7 +455,7 @@ static bool settings_setDFU(void) {
 }
 
 static void settings_displayDFU(void) {
-	printShortDescription(5, 0);
+	printShortDescription(6, 0);
 }
 
 static bool settings_setDeviceInformation(void) {
@@ -477,7 +506,7 @@ static bool settings_setDeviceInformation(void) {
 
 
 static void settings_displayDeviceInformation(void) {
-	printShortDescription(6, 0);
+	printShortDescription(7, 0);
 }
 
 static bool settings_setResetSettings(void) {
@@ -499,7 +528,7 @@ static bool settings_setResetSettings(void) {
 
 
 static void settings_displayResetSettings(void) {
-	printShortDescription(7, 0);
+	printShortDescription(8, 0);
 }
 /* end */
 
@@ -696,9 +725,9 @@ void gui_Menu(const menuitem *menu) {
 }
 
 void enterRootMenu() {
-	HAL_NVIC_DisableIRQ(EXTI0_IRQn);
+	HAL_NVIC_DisableIRQ(EXTI9_5_IRQn);
 	gui_Menu(rootMenu);  // Call the root menu
 	systemSettings.isFirstStart = 0;
-	HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+	HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
 	saveSettings();
 }

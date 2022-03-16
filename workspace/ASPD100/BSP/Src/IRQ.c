@@ -10,7 +10,6 @@
 #include "IRQ.h"
 #include "gui.h"
 
-#include "DRV8876.h"
 /*
  * Catch the IRQ
  */
@@ -39,19 +38,44 @@ static volatile uint8_t click = 0;
 
 static volatile bool isTimerBtnStart = false;
 static volatile bool isTimerDebouncingStart = false;
-static volatile bool isTimerRetractMotor = false;
-static volatile bool isTimerRetractMotorFinish = true;
 static volatile bool isButtonHold = false;
+static volatile bool isForwardActionComplete = true;
+static volatile bool isBackwardActionComplete = false;
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 //	(void)GPIO_Pin;
 	//InterruptHandler_irqCallback();
-	if(GPIO_Pin == actionButton_Pin && !isTimerDebouncingStart){// && isTimerRetractMotorFinish){
+	if(GPIO_Pin == ACTION_BTN_Pin && !isTimerDebouncingStart){
 		__HAL_TIM_SET_COUNTER(&htim15, 0);
 		HAL_TIM_Base_Start_IT(&htim15);
 		__HAL_TIM_CLEAR_FLAG(&htim15, TIM_SR_UIF);
 		isTimerDebouncingStart = true;
-		isTimerRetractMotorFinish = false;
+	}
+}
+
+void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim)
+{
+	if (htim->Instance == TIM1) {
+		if(isForwardActionComplete){
+			HAL_TIM_PWM_Stop_DMA(&htim1, TIM_CHANNEL_1);
+			isForwardActionComplete = false;
+			isBackwardActionComplete = true;
+
+			// Start backward action
+			tmc2208_toggle_direction(&tmc2208);
+
+			uint32_t pwmDutyCycle = stepCounterPeriod / 2; // 50%
+			// Number of steps performed by the stepper motor
+			if (HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_1, &pwmDutyCycle, aspd100.footPrints[aspd100.indexFootPrint].backwardSteps) != HAL_OK)
+			{
+				/* PWM Generation Error */
+				Error_Handler();
+			}
+		}else if(isBackwardActionComplete){
+			HAL_TIM_PWM_Stop_DMA(&htim1, TIM_CHANNEL_1);
+			isForwardActionComplete = true;
+			isBackwardActionComplete = false;
+		}
 	}
 }
 
@@ -70,30 +94,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   /* USER CODE END Callback 0 */
   if (htim->Instance == TIM6) {
     HAL_IncTick();
-  }else if (htim->Instance == TIM7) {
-	  //Timer to turn the motor during x time
-	  HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
-	  HAL_TIM_Base_Stop_IT(&htim7);
-
-	  if(isTimerRetractMotor){
-		  drv8876_direction_control(true); //Retract motor
-		  __HAL_TIM_SET_AUTORELOAD(&htim7, footPrints[counterFootprint].retractTime - 1); //Init timer period with the first value (0402)
-
-			HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
-			HAL_TIM_Base_Start_IT(&htim7);
-			__HAL_TIM_CLEAR_FLAG(&htim7, TIM_SR_UIF);
-			isTimerRetractMotor = false;
-			isTimerRetractMotorFinish = true;
-	  }else{
-		  isTimerRetractMotor = true;
-		  drv8876_direction_control(false); //Push motor
-		  __HAL_TIM_SET_AUTORELOAD(&htim7, footPrints[counterFootprint].pushTime - 1); //Init timer period with the first value (0402)
-	  }
   }else if (htim->Instance == TIM15) {
 	  //Timer to debounce the action button
 	  HAL_TIM_Base_Stop_IT(&htim15);
 	  if(isButtonHold){
-		  HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
+		  //HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
 		  isButtonHold = false;
 	  }else{
 		  if(getButtonAction()){

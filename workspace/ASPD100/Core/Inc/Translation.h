@@ -54,6 +54,8 @@ extern const char *SymbolPrc;
 extern const char *SymbolMinus;
 extern const char *SymbolSpace;
 extern const char *SymbolDot;
+extern const char *SymbolSup;
+extern const char *SymbolInf;
 extern const char *SymbolDegC;
 extern const char *SymbolMinutes;
 extern const char *SymbolSeconds;
@@ -72,6 +74,8 @@ extern const char *FastString;
 extern const char *SlowString;
 extern const char *UPString;
 extern const char *DOWNString;
+extern const char *OnString;
+extern const char *OffString;
 extern const char *UserConfirmation;
 
 extern const char *DebugMenu[];

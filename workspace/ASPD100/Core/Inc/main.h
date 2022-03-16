@@ -41,11 +41,11 @@ extern "C" {
 #include "dma.h"
 #include "i2c.h"
 #include "tim.h"
-#include "usart.h"
 #include "gpio.h"
-#include "adc.h"
 
 #include "OLED.h"
+#include "ASPD100.h"
+#include "TMC2208.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -63,59 +63,54 @@ extern "C" {
 extern uint8_t PCBVersion;
 extern osSemaphoreId_t FRToSI2C_I2CSemaphoreHandle;
 extern StaticSemaphore_t FRToSI2C_xSemaphoreBuffer;
+
+extern aspd100_st aspd100;
+extern tmc2208_st tmc2208;
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
-void startGUITask(void *argument);
-void StartMotorTask(void *argument);
+void StartGUITask(void *argument);
+void StartStepperMotorTask(void *argument);
 extern TaskHandle_t motorTaskNotification;
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define counterPeriod 100
-#define counterPeriod2 50
-#define MCO_Pin GPIO_PIN_0
-#define MCO_GPIO_Port GPIOA
-#define IPROPI_Pin GPIO_PIN_1
-#define IPROPI_GPIO_Port GPIOA
-#define VCP_TX_Pin GPIO_PIN_2
-#define VCP_TX_GPIO_Port GPIOA
-#define upButton_Pin GPIO_PIN_3
-#define upButton_GPIO_Port GPIOA
-#define rightButton_Pin GPIO_PIN_4
-#define rightButton_GPIO_Port GPIOA
-#define centerButton_Pin GPIO_PIN_5
-#define centerButton_GPIO_Port GPIOA
-#define leftButton_Pin GPIO_PIN_6
-#define leftButton_GPIO_Port GPIOA
-#define downButton_Pin GPIO_PIN_7
-#define downButton_GPIO_Port GPIOA
-#define actionButton_Pin GPIO_PIN_0
-#define actionButton_GPIO_Port GPIOB
-#define actionButton_EXTI_IRQn EXTI0_IRQn
-#define PH_IN2_Pin GPIO_PIN_1
-#define PH_IN2_GPIO_Port GPIOB
-#define EN_IN1_Pin GPIO_PIN_8
-#define EN_IN1_GPIO_Port GPIOA
+#define stepCounterPeriod 200
+#define systemCoreClock 64
+#define DIR_Pin GPIO_PIN_0
+#define DIR_GPIO_Port GPIOA
+#define DOWN_BTN_Pin GPIO_PIN_4
+#define DOWN_BTN_GPIO_Port GPIOA
+#define LEFT_BTN_Pin GPIO_PIN_5
+#define LEFT_BTN_GPIO_Port GPIOA
+#define CENTER_BTN_Pin GPIO_PIN_6
+#define CENTER_BTN_GPIO_Port GPIOA
+#define RIGHT_BTN_Pin GPIO_PIN_7
+#define RIGHT_BTN_GPIO_Port GPIOA
+#define UP_BTN_Pin GPIO_PIN_0
+#define UP_BTN_GPIO_Port GPIOB
+#define OLED_RST_Pin GPIO_PIN_1
+#define OLED_RST_GPIO_Port GPIOB
+#define STEP_Pin GPIO_PIN_8
+#define STEP_GPIO_Port GPIOA
 #define I2C1_SCL_Pin GPIO_PIN_9
 #define I2C1_SCL_GPIO_Port GPIOA
 #define I2C1_SDA_Pin GPIO_PIN_10
 #define I2C1_SDA_GPIO_Port GPIOA
-#define nSLEEP_Pin GPIO_PIN_11
-#define nSLEEP_GPIO_Port GPIOA
-#define nFAULT_Pin GPIO_PIN_12
-#define nFAULT_GPIO_Port GPIOA
 #define SWDIO_Pin GPIO_PIN_13
 #define SWDIO_GPIO_Port GPIOA
 #define SWCLK_Pin GPIO_PIN_14
 #define SWCLK_GPIO_Port GPIOA
-#define VCP_RX_Pin GPIO_PIN_15
-#define VCP_RX_GPIO_Port GPIOA
-#define LD3_Pin GPIO_PIN_3
-#define LD3_GPIO_Port GPIOB
+#define SWO_Pin GPIO_PIN_3
+#define SWO_GPIO_Port GPIOB
+#define LEDs_CTR_Pin GPIO_PIN_6
+#define LEDs_CTR_GPIO_Port GPIOB
+#define ACTION_BTN_Pin GPIO_PIN_7
+#define ACTION_BTN_GPIO_Port GPIOB
+#define ACTION_BTN_EXTI_IRQn EXTI9_5_IRQn
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
@@ -125,5 +120,3 @@ extern TaskHandle_t motorTaskNotification;
 #endif
 
 #endif /* __MAIN_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

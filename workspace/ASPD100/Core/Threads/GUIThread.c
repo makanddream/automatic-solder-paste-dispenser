@@ -9,8 +9,6 @@
 #include "gui.h"
 #include "Buttons.h"
 
-#include "DRV8876.h"
-
 #include "configuration.h"
 
 #include "version.h"
@@ -165,43 +163,26 @@ static void gui_automaticSolderPasteDispenserMode(void) {
 	 * --> Long hold back button to exit
 	 * --> Double button to exit
 	 */
-	counterFootprint = 0;
 	bool isUP = false;
 
-	uint16_t pushTime[12] = {1000, PUSH_TIME_0201, PUSH_TIME_0402, PUSH_TIME_0603, PUSH_TIME_0805, 0, 0, 0, 0, 0, 0, 0};
-	uint16_t retractTime[12] = {10, RETRACT_TIME_0201, RETRACT_TIME_0402, RETRACT_TIME_0603, RETRACT_TIME_0805, 0, 0, 0, 0, 0, 0, 0};
-
-	uint8_t footprintsCodeTabSize = sizeof(ImperialCode) / sizeof(ImperialCode[0]);
-
-	//footPrints[footprintsCodeTabSize];
-
-	for(uint8_t i = 0; i < footprintsCodeTabSize; i++){
-#ifdef IMPERIAL
-		footPrints[i].footprintName = ImperialCode[i];
-#endif
-
-#ifdef METRIC
-		footPrints[i].footprintName = MetricCode[i];
-#endif
-
-		footPrints[i].pushTime = pushTime[i];
-		footPrints[i].retractTime = retractTime[i];
-	}
-
-	counterFootprint = 3; //Just for test
-
-	__HAL_TIM_SET_AUTORELOAD(&htim7, footPrints[counterFootprint].pushTime - 1); //Init timer period with the first value (0402)
-
 	for (;;) {
-		OLED_setFont(0);
-		OLED_setCursor(0, 8);
+
 		OLED_clearScreen();
 
-		if(counterFootprint >= footprintsCodeTabSize){
-			counterFootprint = 0;
+		OLED_setFont(0);
+
+		OLED_setCursor(20, 16);
+		OLED_print(SymbolInf);
+
+		OLED_setCursor(95, 16);
+		OLED_print(SymbolSup);
+
+		if(aspd100.indexFootPrint >= sizeof(aspd100.footPrints)){
+			aspd100.indexFootPrint = 0;
 		}
 
-		OLED_print(footPrints[counterFootprint].footprintName);
+		OLED_setCursor(40, 16);
+		OLED_print(aspd100.footPrints[aspd100.indexFootPrint].footprintName);
 
 		ButtonState buttons = getButtonState();
 		buttonsSave = buttons;
@@ -223,28 +204,32 @@ static void gui_automaticSolderPasteDispenserMode(void) {
 				return;
 				break;
 			case BUTTON_R_SHORT:
-				if(counterFootprint == footprintsCodeTabSize - 1){
-					counterFootprint = 0;
+				OLED_setCursor(105, 16);
+				OLED_print(SymbolSup);
+				if(aspd100.indexFootPrint == sizeof(aspd100.footPrints) - 1){
+					aspd100.indexFootPrint = 0;
 				}else{
-					counterFootprint++;
+					aspd100.indexFootPrint++;
 				}
-				__HAL_TIM_SET_AUTORELOAD(&htim7, footPrints[counterFootprint].pushTime - 1);
+				osDelay(50);
 				break;
 			case BUTTON_L_SHORT:
-				if(counterFootprint == 0){
-					counterFootprint = footprintsCodeTabSize - 1;
+				OLED_setCursor(10, 16);
+				OLED_print(SymbolInf);
+				if(aspd100.indexFootPrint == 0){
+					aspd100.indexFootPrint = sizeof(aspd100.footPrints) - 1;
 				}else{
-					counterFootprint--;
+					aspd100.indexFootPrint--;
 				}
-				__HAL_TIM_SET_AUTORELOAD(&htim7, footPrints[counterFootprint].pushTime - 1);
+				osDelay(50);
 				break;
 			case BUTTON_UP_SHORT:
-				isUP = true;
+				/*isUP = true;
 				displayArrowState(ARROW_UP, 88);
-				drv8876_direction_control(false);
+				drv8876_direction_control(false);*/
 				break;
 			case BUTTON_DOWN_SHORT:
-				isUP = false;
+				/*isUP = false;
 				displayArrowState(ARROW_DOWN, 88);
 				drv8876_direction_control(true);
 				BaseType_t xHigherPriorityTaskWoken = pdFALSE;
@@ -252,7 +237,7 @@ static void gui_automaticSolderPasteDispenserMode(void) {
 					vTaskNotifyGiveFromISR(motorTaskNotification,
 							&xHigherPriorityTaskWoken);
 					portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-				}
+				}*/
 				break;
 			case BUTTON_CENTER_SHORT:
 
@@ -261,7 +246,7 @@ static void gui_automaticSolderPasteDispenserMode(void) {
 				break;
 		}
 
-		displayArrowState(ARROW_EMPTY, 88);
+		/*displayArrowState(ARROW_EMPTY, 88);
 
 		if(isUP){
 			OLED_setCursor(70, 8);
@@ -269,13 +254,21 @@ static void gui_automaticSolderPasteDispenserMode(void) {
 		}else{
 			OLED_setCursor(70, 8);
 			OLED_print(DOWNString);
-		}
+		}*/
 
 		OLED_refresh();
 
 		// Slow down ui update rate
 		GUIDelay();
 	}
+}
+
+void boot_logo_animation(void){
+	OLED_clearScreen();
+
+	OLED_setFont(0);
+
+
 }
 
 /* USER CODE BEGIN Header_StartGUITask */
@@ -292,6 +285,8 @@ void StartGUITask(void *argument)
 	OLED_initialize();  // start up the OLED screen
 
 	bool startRootMenu = true;
+
+	boot_logo_animation();
 
 	software_verification();
 

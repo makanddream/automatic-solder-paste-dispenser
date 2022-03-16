@@ -13,6 +13,7 @@
  */
 #define FIRST_START          1        // Default TODO
 #define DEFAULT_MODE         1        // Default mode is automatic solder paste dispenser
+#define LEDS_BRIGHTNESS      50       // Default leds brightness value is 50%
 
 /**
  * Default gui settings
@@ -22,7 +23,7 @@
 /**
  * Default screen settings
  */
-#define CONSTRAST_VALUE          50        // Default constrast value is 50%
+#define CONTRAST_VALUE          50        // Default contrast value is 50%
 
 /**
  * How many seconds/minutes we wait until going to sleep/shutdown.
@@ -44,14 +45,14 @@
 /*
  * Footprints configuration
  */
-#define PUSH_TIME_0201		500
+#define PUSH_TIME_0201		100
 #define RETRACT_TIME_0201	490
 
-#define PUSH_TIME_0402		600
+#define PUSH_TIME_0402		200
 #define RETRACT_TIME_0402	590
 
-#define PUSH_TIME_0603		800
+#define PUSH_TIME_0603		300
 #define RETRACT_TIME_0603	790
 
-#define PUSH_TIME_0805		900
+#define PUSH_TIME_0805		400
 #define RETRACT_TIME_0805	890

@@ -27,15 +27,6 @@ typedef struct {
 	void (* const draw)(void);
 } menuitem;
 
-typedef struct FootPrint_t{
-	const char* footprintName;
-	uint16_t pushTime; // Motor activation time in ms
-	uint16_t retractTime; // Motor activation time in ms
-}FootPrint;
-
-FootPrint footPrints[12];
-uint8_t counterFootprint;
-
 void enterRootMenu();
 void GUIDelay();
 extern const menuitem rootMenu[];

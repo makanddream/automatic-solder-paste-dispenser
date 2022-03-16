@@ -80,32 +80,32 @@ void unstick_I2C() {
 }
 
 uint8_t getButtonRight() {
-	return HAL_GPIO_ReadPin(rightButton_GPIO_Port, rightButton_Pin) == GPIO_PIN_RESET ?
+	return HAL_GPIO_ReadPin(RIGHT_BTN_GPIO_Port, RIGHT_BTN_Pin) == GPIO_PIN_RESET ?
 			1 : 0;
 }
 
 uint8_t getButtonLeft() {
-	return HAL_GPIO_ReadPin(leftButton_GPIO_Port, leftButton_Pin) == GPIO_PIN_RESET ?
+	return HAL_GPIO_ReadPin(LEFT_BTN_GPIO_Port, LEFT_BTN_Pin) == GPIO_PIN_RESET ?
 			1 : 0;
 }
 
 uint8_t getButtonUp() {
-	return HAL_GPIO_ReadPin(upButton_GPIO_Port, upButton_Pin) == GPIO_PIN_RESET ?
+	return HAL_GPIO_ReadPin(UP_BTN_GPIO_Port, UP_BTN_Pin) == GPIO_PIN_RESET ?
 			1 : 0;
 }
 
 uint8_t getButtonDown() {
-	return HAL_GPIO_ReadPin(downButton_GPIO_Port, downButton_Pin) == GPIO_PIN_RESET ?
+	return HAL_GPIO_ReadPin(DOWN_BTN_GPIO_Port, DOWN_BTN_Pin) == GPIO_PIN_RESET ?
 			1 : 0;
 }
 
 uint8_t getButtonCenter() {
-	return HAL_GPIO_ReadPin(centerButton_GPIO_Port, centerButton_Pin) == GPIO_PIN_RESET ?
+	return HAL_GPIO_ReadPin(CENTER_BTN_GPIO_Port, CENTER_BTN_Pin) == GPIO_PIN_RESET ?
 			1 : 0;
 }
 
 uint8_t getButtonAction() {
-	return HAL_GPIO_ReadPin(actionButton_GPIO_Port, actionButton_Pin) == GPIO_PIN_RESET ?
+	return HAL_GPIO_ReadPin(ACTION_BTN_GPIO_Port, ACTION_BTN_Pin) == GPIO_PIN_RESET ?
 			1 : 0;
 }
 

@@ -51,18 +51,23 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
+# Release/Debug workspace directory
+/workspace/ASPD100/Debug/*
+/workspace/ASPD100_FULL_TESTER/Debug/*
+/workspace/ASPD100_MX_CONFIG/Debug/*
+
 # Backup
 *.bak
 
 #For the Alitum projects just save on repo the fabrication files
 
 #Temporary removed this directory
-PCB_Design/*
+PCBs/*
 
-PCB_Design/*/*
-!PCB_Design/*/*/
-PCB_Design/*/*/*
-!PCB_Design/*/*/Fabrication
+PCBs/*/*
+!PCBs/*/*/
+PCBs/*/*/*
+!PCBs/*/*/Fabrication
 
 # Others
 *.launch
@@ -73,37 +78,27 @@ PCB_Design/*/*/*
 /workspace/ASPD100/.settings/*
 /workspace/ASPD100/.metadata/*
 /workspace/ASPD100/Debug
+/workspace/ASPD100_FULL_TESTER/*
 /Translation_Editor/__pycache__
 
 # Debug
 *.scana
 
-# Not neccesary because can be re-generated
-ASPD100-hw-cubeMX-config/*
-!ASPD100-hw-cubeMX-config/ASPD100.ioc
-!ASPD100-hw-cubeMX-config/script-copy-new-generate-files-project.bat
-/ASPD100-hw-cubeMX-config/Drivers/*
-/ASPD100-hw-cubeMX-config/EWARM/*
-/ASPD100-hw-cubeMX-config/Middlewares/*
-/ASPD100-hw-cubeMX-config/.cproject
-/ASPD100-hw-cubeMX-config/.mxproject
-/ASPD100-hw-cubeMX-config/.project
-/ASPD100-hw-cubeMX-config/STM32L432KCUX_FLASH.ld
-/ASPD100-hw-cubeMX-config/mx.scratch
-
-#My own research projects/files, no need to be saved !
-/reference/*
-DRV8876/*
-workspace/DRV8876-control/*
-/workspace/stm32L432-ssd1306/*
-/workspace/save-data-on-flash/*
-/workspace/STUSB4500_CONTROLLER/*
-/workspace/STUSB4500_CONTROLLER_V2/*
-/workspace/STM32L432KC_NUCLO_LED_BLINK/*
-/workspace/STM32L432KC_NUCLEO_DFU/*
+#Docs not for github!
 /docs/datasheet/*
-/PowerManagement/*
+/docs/icon/*
 /docs/PCB_MECHANICAL.RUL
 /docs/en.EVAL-SCS001V1_BOM.xls
 /docs/aspd100-3d-model/*
-Demonstration/*
+/docs/testTR5.xlsx
+/docs/testTR5V2.xlsx
+/docs/WiresASPD100.xlsx
+
+#Only for developpement
+/Assets/*
+/workspace_test/*
+/reference/*
+/DRV8876/*
+/PowerManagement/*
+/Demonstration/*
+/Trash/*

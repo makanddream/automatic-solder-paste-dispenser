@@ -27,9 +27,9 @@ bool FRToSI2C_Mem_Write(uint16_t DevAddress, uint16_t MemAddress, uint8_t *pData
 //Returns true if device ACK's being addressed
 bool FRToSI2C_probe(uint16_t DevAddress);
 
-bool FRToSI2C_Transmit(uint16_t DevAddress, uint8_t *pData, uint16_t Size);
+bool I2C_Transmit(uint16_t DevAddress, uint8_t *pData, uint16_t Size);
 void FRToSI2C_Receive(uint16_t DevAddress, uint8_t *pData, uint16_t Size);
-void FRToSI2C_TransmitReceive(uint16_t DevAddress, uint8_t *pData_tx, uint16_t Size_tx, uint8_t *pData_rx, uint16_t Size_rx);
+void I2C_TransmitReceive(uint16_t DevAddress, uint8_t *pData_tx, uint16_t Size_tx, uint8_t *pData_rx, uint16_t Size_rx);
 bool FRToSI2C_I2C_RegisterWrite(uint8_t address, uint8_t reg, uint8_t data);
 uint8_t FRToSI2C_I2C_RegisterRead(uint8_t address, uint8_t reg);
 
