@@ -114,6 +114,8 @@ def getConstants():
     consants.append(('SymbolMinus', '-'))
     consants.append(('SymbolSpace', ' '))
     consants.append(('SymbolDot', '.'))
+    consants.append(('SymbolSup', '>'))
+    consants.append(('SymbolInf', '<'))
     consants.append(('SymbolDegC', 'C'))
     consants.append(('SymbolDegF', 'F'))
     consants.append(('SymbolMinutes', 'M'))

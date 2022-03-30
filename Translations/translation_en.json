@@ -22,6 +22,7 @@
 		"IdleSetString": " Set:",
 		"TipDisconnectedString": "TIP DISCONNECTED",
 		"SolderingAdvancedPowerPrompt": "Power: ",
+		"OnString": "On",
 		"OffString": "Off",
 		"ResetOKMessage": "Reset OK",
 		"YourGainMessage": "Your gain:",
@@ -111,6 +112,13 @@
 				"Syringe"
 			],
 			"desc": "Procedure for changing or replacing the syringe"
+		},
+		"Brightness": {
+			"text2": [
+				"Leds",
+				"Brightness"
+			],
+			"desc": "Leds brightness 0% - 100%"
 		},
 		"Contrast": {
 			"text2": [

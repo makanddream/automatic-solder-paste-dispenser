@@ -81,6 +81,10 @@ var def =
 			"maxLen": null
 		},
 		{
+			"id": "OnString",
+			"maxLen": 3
+		},
+		{
 			"id": "OffString",
 			"maxLen": 3
 		},
@@ -340,6 +344,11 @@ var def =
 			"id": "Contrast",
 			"maxLen": 4,
 			"maxLen2": 9
+		},
+		{
+			"id": "Brightness",
+			"maxLen": 10,
+			"maxLen2": 11
 		},
 		{
 			"id": "ScrollingSpeed",
