@@ -1,8 +1,8 @@
 # Automatic Solder Paste Dispenser (ASPD100)
 
-| 3D Case Design | 3D PCB Design | First prototype |
-| ------------- | ------------- | ------------- |
-| <img src="https://github.com/makanddream/automatic-solder-paste-dispenser/blob/master/docs/3DModelDesign.png" width="150"> | <img src="https://github.com/makanddream/automatic-solder-paste-dispenser/blob/master/docs/3D_ASPD100_PCB_DESIGN.PNG" width="220"> | <img src="https://github.com/makanddream/automatic-solder-paste-dispenser/blob/master/docs/FirstPrototype.jpg" width="220">
+| 3D Case Design | 3D PCB Design | First proto | Second proto |
+| ------------- | ------------- | ------------- | ------------- |
+| <img src="https://github.com/makanddream/automatic-solder-paste-dispenser/blob/master/docs/3DModelDesign.png" width="150"> | <img src="https://github.com/makanddream/automatic-solder-paste-dispenser/blob/master/docs/3D_ASPD100_PCB_DESIGN.PNG" width="220"> | <img src="https://github.com/makanddream/automatic-solder-paste-dispenser/blob/master/docs/FirstPrototype.jpg" width="220"> | <img src="https://github.com/makanddream/automatic-solder-paste-dispenser/blob/master/docs/SecondPrototype.jpg" width="220">
 
 ## Table of contents
 * [Summary](#summary)
@@ -52,7 +52,7 @@ I want something in between these two methods for these reasons:
 	
 ## Requirements
 
-* STM32CubeIDE 1.4.0
+* STM32CubeIDE 1.9.0
 * Python 3.0 for building the translation module
 * WinMerge for the script : "script-copy-new-generate-files-project.bat"
 
@@ -61,11 +61,11 @@ I want something in between these two methods for these reasons:
 * STM32L432kc
 * 0.91 Inch OLED I2C Display SSD1306, 128x32
 * JS1400AFQ
-* DRV8876 (Motor driver)
+* TMC2208 (Stepper motor driver)
 
-## Tests
+## Translations
 
-This project is tested by my own test bench powered by jenkins.
+The translation module was adapted to my hardware from an existing open source project (https://github.com/Ralim/IronOS). All the credit goes to them!
 
 ## Purchase info
 
@@ -73,6 +73,3 @@ The product will be available soon on the https://www.tindie.com/ platform.
 
 ## Licence
 The code created by the community is GNU GPLv3. Unless noted elsewhere. Other components such as HAL/FreeRTOS have their own licence.
-
-## Commercial Use
-This software is provided as-is, so I cannot provide any commercial support for the firmware. Please do not re-host the files, but rather link to this page, so that there are no old versions of the firmware scattered around.
